@@ -1,0 +1,16 @@
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\bin\Debug\KernelTestingWPF.exe.config
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\bin\Debug\KernelTestingWPF.exe
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\bin\Debug\KernelTestingWPF.pdb
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.csprojResolveAssemblyReference.cache
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\MainWindow.g.cs
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\Page1.g.cs
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\App.g.cs
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF_MarkupCompile.cache
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF_MarkupCompile.lref
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\MainWindow.baml
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\Page1.baml
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.g.resources
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.Properties.Resources.resources
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.csproj.GenerateResource.Cache
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.exe
+C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.pdb
