@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\obj\Debug\
+C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\
 KernelTestingWPF
 none
 false
 DEBUG;TRACE
-C:\Users\vaughanv21\Documents\Visual Studio 2017\Projects\KernelTestingWPF\KernelTestingWPF\App.xaml
-2400784391
+C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\App.xaml
+41204921163
 
-6-1241758654
+8-1553704156
 13738642453
-MainWindow.xaml;Page1.xaml;
+ConfigurePage.xaml;MainWindow.xaml;ReportPage.xaml;RunningPage.xaml;
 
 False
 

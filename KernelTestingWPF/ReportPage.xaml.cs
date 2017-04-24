@@ -16,13 +16,18 @@ using System.Windows.Shapes;
 namespace KernelTestingWPF
 {
     /// <summary>
-    /// Interaction logic for Page1.xaml
+    /// Interaction logic for ReportPage.xaml
     /// </summary>
-    public partial class Page1 : Page
+    public partial class ReportPage : Page
     {
-        public Page1()
+        public ReportPage()
         {
             InitializeComponent();
+        }
+
+        private void GoToConfigureButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new ConfigurePage());
         }
     }
 }

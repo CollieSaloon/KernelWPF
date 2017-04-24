@@ -1,0 +1,65 @@
+﻿<Page x:Class="KernelTestingWPF.ConfigurePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:KernelTestingWPF"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="ConfigurePage">
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".5*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Configure Your Program for Analysis" FontFamily="Calibri" FontSize="24" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".15*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width=".15*" />
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <TextBlock Name="txtProgram" Grid.Column="2" Text="program text" />
+            </ScrollViewer>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Margin="0,0,15,0" Width="150" TextWrapping="Wrap" Text="Number of Fast Cores:   " />
+                    <ComboBox Name="cbFastCores" Background="White" BorderBrush="Black" Width="50" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Margin="0,0,15,0" Width="150" TextWrapping="Wrap" Text="Number of Slow Cores:  "/>
+                    <ComboBox Name="cbSlowCores" Background="White" BorderBrush="Black" Width="50" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Margin="0,0,15,0" Width="150" TextWrapping="Wrap" Text="Pick the Program you would like to Run:  " />
+                    <Button Name="FindFileButton" Background="White" Width="110" Height="25" BorderBrush="Black" Click="FindFileButton_Click" Content="Find Program File"/>
+                </StackPanel>
+                <StackPanel  Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Margin="0,0,15,0" Width="150" TextWrapping="Wrap" Text="Policy Type for the execution of you program:  " />
+                    <ComboBox Name="cbPolicy" Background="White" BorderBrush="Black" Width="100" VerticalContentAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="txtInfo" Text="InfoText" Margin="5,0,0,0" />
+            <Button Name="GoToRunningButton" Click="GoToRunningButton_Click" Background="White" BorderBrush="Black" Width="90" 
+                    Content="Run Program" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="2" />
+        </Grid>
+    </Grid>
+</Page>
