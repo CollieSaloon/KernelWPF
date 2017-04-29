@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="NavigationContext.cs" />
     <Compile Include="Scheduler.cs" />
     <Page Include="ConfigurePage.xaml">
       <SubType>Designer</SubType>

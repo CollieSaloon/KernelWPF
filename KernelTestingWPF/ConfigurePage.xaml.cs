@@ -23,7 +23,9 @@ namespace KernelTestingWPF
     public partial class ConfigurePage : Page
     {
 
+        NavigationContext nav = new NavigationContext();
         int comboNum = 5;
+        
 
         public ConfigurePage()
         {
@@ -62,7 +64,19 @@ namespace KernelTestingWPF
 
         private void GoToRunningButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new RunningPage());
+            RunningPage rp = new RunningPage();
+
+            rp.NumFastCores = cbFastCores.SelectedIndex + 1;
+            rp.NumSlowCores = cbSlowCores.SelectedIndex + 1;
+            rp.PolicyType = cbPolicy.SelectedIndex;
+            rp.FileName = nav.fileName;
+
+            rp.setPage();
+
+            if (nav.fileName != null)
+            {
+                NavigationService.Navigate(rp);
+            }
         }
 
         private void FindFileButton_Click(object sender, RoutedEventArgs e)
@@ -73,6 +87,7 @@ namespace KernelTestingWPF
             {
                 txtProgram.Text = openFile.FileName + "\n\n";
                 txtProgram.Text += File.ReadAllText(openFile.FileName);
+                nav.fileName = openFile.FileName;
             }
         }
 

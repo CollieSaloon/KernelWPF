@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows.Controls;
 
 namespace KernelTestingWPF
 {
     class Core
     {
+        TextBlock tb;
         public const int QUEUE_SIZE = 100;
         public const bool DEBUG = false;
         public const bool SLP_DEBUG = false;
@@ -18,8 +20,9 @@ namespace KernelTestingWPF
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
 
-        public Core(bool isFast = false)
+        public Core(bool isFast, TextBlock tb)
         {
+            this.tb = tb; // malarky
             processorQueue = new List<Instruction>();
             registers = new int[Instruction.NUM_REGISTERS];
             for (int i = 0; i < registers.Length; i++)
@@ -157,12 +160,27 @@ namespace KernelTestingWPF
         {
             // This will change to the WPF stuff later
 
-
+            
             Console.Write("\n>> ");
             if (!asChar)
+            {
                 Console.WriteLine(output);
+                
+                new Thread(
+                     () =>
+                     {
+                         tb.Dispatcher.BeginInvoke((Action)(() => tb.Text += output + "\n"));
+                     }).Start();
+            }
             else
+            {
                 Console.WriteLine(((char)output).ToString());
+                new Thread(
+                    () =>
+                    {
+                        tb.Dispatcher.BeginInvoke((Action)(() => tb.Text += ((char)output).ToString() + "\n"));
+                    }).Start();
+            }
             Console.WriteLine();
         }
 
