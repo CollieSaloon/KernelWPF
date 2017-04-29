@@ -1,18 +1,18 @@
 ﻿KernelTestingWPF
 
 
-winexe
+exe
 C#
 .cs
-C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\
+C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\obj\Debug\
 KernelTestingWPF
 none
 false
 DEBUG;TRACE
-C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\App.xaml
+C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\App.xaml
 41204921163
 
-121626553063
+1593887061
 13738642453
 ConfigurePage.xaml;MainWindow.xaml;ReportPage.xaml;RunningPage.xaml;
 

@@ -20,21 +20,41 @@ namespace KernelTestingWPF
     /// </summary>
     public partial class RunningPage : Page
     {
+        // Globals here
+        Scheduler scheduler; // malarky
+        List<Core> allCores; // malarky
+
         List<ListView> listviews = new List<ListView>();
         int numCore = 1;
      
-
         public RunningPage()
         {
             InitializeComponent();
+            InitializeCoresAndScheduler(2, 2, "C:\\CKT_INFO\\code.txt", 0); // 2 Fast 2 Slow: Tokyo Drift
             setPage();
-       
+        }
+
+        private void InitializeCoresAndScheduler(int numFast, int numSlow, string filename, int policy) // malarky
+        {
+            allCores = new List<Core>();
+
+            for(int i = 0; i < numFast; i++) // add fast cores
+                allCores.Add(new Core(true));
+
+            for (int i = 0; i < numFast; i++) // add slow cores
+                allCores.Add(new Core());
+            
+            scheduler = new Scheduler(allCores, filename, policy);
+
+            foreach (Core c in allCores)
+                c.Start();
+
+            scheduler.Start();
         }
 
         private void setPage()
         {
            
-            
         }
 
         private void GoToReportButton_Click(object sender, RoutedEventArgs e)
