@@ -105,7 +105,7 @@ namespace KernelTestingWPF
                             }
                             break;
                         case (int)P_TYPE.RATIO_BASED:
-                            int index = CoreManager.GetMinPercentage();
+                            int index = CoreManager.GetMinPercentageIndex();
 
                             instruction = totalQueue[0];
                             CoreManager.EnqueueAt(index, instruction);
@@ -120,6 +120,7 @@ namespace KernelTestingWPF
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
                             break;
                         case (int)P_TYPE.TYPE_BASED:
+
                             break;
 
 

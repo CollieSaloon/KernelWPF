@@ -100,8 +100,25 @@ namespace KernelTestingWPF
             rp.inputIsFast = cbInput.SelectedIndex == 1;
             rp.outputIsFast = cbOutput.SelectedIndex == 1;
 
-            float.TryParse(tBoxp1Fast.Text, out rp.percentFast);
+            rp.percentFast = rp.percentSlow = 0;
+            float.TryParse(tBoxp1Fast.Text, out rp.percentFast); // verification: always prefer fast
             float.TryParse(tBoxp1Slow.Text, out rp.percentSlow);
+            rp.percentFast = Math.Abs(rp.percentFast);
+            rp.percentSlow = Math.Abs(rp.percentSlow);
+            if (rp.percentFast > 100 || rp.percentSlow > 100) // handle all possible malarky
+            {
+                rp.percentFast = 100;
+                rp.percentSlow = 0;
+            }
+            else if (rp.percentFast + rp.percentSlow > 100)
+            {
+                rp.percentSlow = 100 - rp.percentFast;
+            }
+            else if (rp.percentFast + rp.percentSlow < 100)
+            {
+                rp.percentFast = 100 - rp.percentSlow;
+            }
+            CoreManager.SetRatio((int)rp.percentFast, (int)rp.percentSlow);
 
             int.TryParse(tBoxP4.Text, out CoreManager.QueueLimit);
             CoreManager.QueueLimit -= 1;
