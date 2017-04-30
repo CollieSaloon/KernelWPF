@@ -63,6 +63,14 @@ namespace KernelTestingWPF
         {
             return cores[index].GetQueueAmount();
         }
+        public static int GetMinOfType(Instruction.I_TYPE type, bool restrict = false, bool fast = false)
+        {
+            int index = -1;
+
+            
+
+            return index;
+        }
 
         public static int GetMinPercentage(bool restrict = false, bool fast = false)
         {
