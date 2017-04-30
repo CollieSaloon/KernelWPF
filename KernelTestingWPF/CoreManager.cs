@@ -16,6 +16,9 @@ namespace KernelTestingWPF
         public static int QueueLimit = 1;
         public static int percentFast, percentSlow;
 
+        public static bool[] typesAreFast = { true, true, true, true }; // input, output, computational, registers
+        public static List<bool> typesAreFastFull = new List<bool>();
+
         public static int numFast, numSlow;
 
         public static void ChangeSpeed(float dspeed)
@@ -45,6 +48,32 @@ namespace KernelTestingWPF
             {
                 cores.Add(new Core(false, txtInfo, i));
             }
+            /*
+            PRINT, // print out an int 
+            PRINT_REG, // print out an int from a reg
+            PRINT_CHAR, // print out a char (passed in as int)
+            SET_REG, // takes in a register and a value
+            SET_REG_REG, // takes in two registers
+            ADD, // takes in three registers
+            SUB, // takes in three registers
+            MUL, // takes in three registers
+            DIV, // takes in three registers
+            NUM_TYPES // placeholder for size, also if an instruction is set to this, invalid
+            // */
+            // 0 - input // NOT USED
+            // 1 - output
+            // 2 - computation
+            // 3 - registers
+            typesAreFastFull.Add(typesAreFast[1]);
+            typesAreFastFull.Add(typesAreFast[1]);
+            typesAreFastFull.Add(typesAreFast[1]);
+            typesAreFastFull.Add(typesAreFast[3]);
+            typesAreFastFull.Add(typesAreFast[3]);
+
+            typesAreFastFull.Add(typesAreFast[2]);
+            typesAreFastFull.Add(typesAreFast[2]);
+            typesAreFastFull.Add(typesAreFast[2]);
+            typesAreFastFull.Add(typesAreFast[2]);
         }
 
         public static void StartCores()
@@ -60,12 +89,24 @@ namespace KernelTestingWPF
         {
             return cores[index].GetQueueAmount();
         }
-        public static int GetMinOfType(Instruction.I_TYPE type, bool restrict = false, bool fast = false)
+        public static int GetMinOfType(Instruction.I_TYPE type)
         {
             int index = -1;
+            int min = 100000;
 
-            
-
+            for(int i = 0; i < cores.Count; i++)
+            {
+                int current = 100000;
+                current = cores[i].GetQueueAmount();
+                if (cores[i].GetIsFast() && !typesAreFastFull[(int)type])
+                    current = 100000; // if it can't be done by preferred core type (fast/slow), cheese it
+                
+                if (current < min)
+                {
+                    min = current;
+                    index = i;
+                }
+            }
             return index;
         }
 

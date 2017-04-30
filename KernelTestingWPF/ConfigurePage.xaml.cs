@@ -98,12 +98,10 @@ namespace KernelTestingWPF
             CoreManager.numFast = rp.NumFastCores;
             CoreManager.numSlow = rp.NumSlowCores;
 
-
-
-            rp.computationIsFast = cbComputations.SelectedIndex == 1;
-            rp.registerIsFast = cbRegister.SelectedIndex == 1;
-            rp.inputIsFast = cbInput.SelectedIndex == 1;
-            rp.outputIsFast = cbOutput.SelectedIndex == 1;
+            rp.inputIsFast = CoreManager.typesAreFast[0] = cbInput.SelectedIndex == 0;
+            rp.outputIsFast = CoreManager.typesAreFast[1] = cbOutput.SelectedIndex == 0;
+            rp.computationIsFast = CoreManager.typesAreFast[2] = cbComputations.SelectedIndex == 0;
+            rp.registerIsFast = CoreManager.typesAreFast[3] = cbRegister.SelectedIndex == 0;
 
             rp.percentFast = rp.percentSlow = 0;
             float.TryParse(tBoxp1Fast.Text, out rp.percentFast); // verification: always prefer fast
@@ -166,7 +164,7 @@ namespace KernelTestingWPF
             }
             else
             {
-
+                //
             }
         }
 

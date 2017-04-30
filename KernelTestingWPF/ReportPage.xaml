@@ -42,7 +42,7 @@
             <TextBlock Name="txtInfo" Text="InfoText" Margin="5,0,0,0" />
             <Button Name="GoToConfigureButton" Click="GoToConfigureButton_Click"  
                     Background="White" BorderBrush="Black" Width="130" Height="24"
-                Content="Configure A Program" Grid.Column="2" Grid.Row="2" 
+                Content="Return to Execution" Grid.Column="2" Grid.Row="2" 
                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </Grid>

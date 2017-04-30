@@ -83,6 +83,7 @@ namespace KernelTestingWPF
                 while (totalQueue.Count > 0)
                 {
                     Instruction instruction = null;
+                    int index = -1;
 
                     switch (policy)
                     {
@@ -105,7 +106,7 @@ namespace KernelTestingWPF
                             }
                             break;
                         case (int)P_TYPE.RATIO_BASED:
-                            int index = CoreManager.GetMinPercentageIndex();
+                            index = CoreManager.GetMinPercentageIndex();
 
                             instruction = totalQueue[0];
                             CoreManager.EnqueueAt(index, instruction);
@@ -118,9 +119,19 @@ namespace KernelTestingWPF
 
                             break;
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
+
                             break;
                         case (int)P_TYPE.TYPE_BASED:
+                            instruction = totalQueue[0];
+                            index = CoreManager.GetMinOfType(instruction.type);
 
+                            CoreManager.EnqueueAt(index, instruction);
+                            totalQueue.RemoveAt(0);
+
+                            listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                            {
+                                listViewInstructions.Items.RemoveAt(1);
+                            }));
                             break;
 
 

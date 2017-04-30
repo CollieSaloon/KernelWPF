@@ -38,7 +38,7 @@ namespace KernelTestingWPF
 
         private void GoToConfigureButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ConfigurePage());
+            NavigationService.GoBack();//(new ConfigurePage());
         }
     }
 }
