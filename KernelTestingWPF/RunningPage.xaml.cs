@@ -31,6 +31,7 @@ namespace KernelTestingWPF
         int policyType;
 
         int testMerge;
+        int testMerge2;
 
         public bool inputIsFast, outputIsFast, computationIsFast, registerIsFast;//
         public float percentFast, percentSlow;//
