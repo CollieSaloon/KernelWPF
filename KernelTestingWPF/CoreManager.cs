@@ -85,6 +85,11 @@ namespace KernelTestingWPF
             }
         }
 
+        public static int GetPowerConsumption(int index)
+        {
+            return cores[index].totalPower;
+        }
+
         public static int GetQueueAmount(int index)
         {
             return cores[index].GetQueueAmount();
@@ -96,10 +101,12 @@ namespace KernelTestingWPF
 
             for(int i = 0; i < cores.Count; i++)
             {
-                int current = 100000;
-                current = cores[i].GetQueueAmount();
+                int current = cores[i].GetQueueAmount();
+
                 if (cores[i].GetIsFast() && !typesAreFastFull[(int)type])
                     current = 100000; // if it can't be done by preferred core type (fast/slow), cheese it
+                else if (!cores[i].GetIsFast() && typesAreFastFull[(int)type])
+                    current = 100000;
                 
                 if (current < min)
                 {
@@ -113,59 +120,44 @@ namespace KernelTestingWPF
         public static int GetMinPercentageIndex()
         {
             int index = -1;
-            List<float> queueRatio = new List<float>();
-            List<int> queueSum = new List<int>();
 
-            float percentShownFast = 0;
-            float percentShownSlow = 0;
+            float desiredPercentFast = percentFast / 100;
+            float desiredPercentSlow = percentSlow / 100;
 
-            float percentCores = 0;
-            float percentSystem= percentFast / (percentFast + percentSlow);
-            float percentSum = 0;
+            // Optimization: if all queues are empty, just throw it in a fast or slow based on desired
 
-            int minFast, minSlow, minFastIndex, minSlowIndex;
-            minFast = minSlow = 100000;
-            minFastIndex = minSlowIndex = -1;
-            for (int i = 0; i < cores.Count; i++)
+            bool allEmpty = false;
+            foreach (Core c in cores)
             {
-                queueSum.Add(cores[i].GetQueueAmount()); // get queue count
-            }
-            for (int i = 0; i < cores.Count; i++)
-            {
-                queueRatio.Add(queueSum[i] / (queueSum.Count >= 1 ? queueSum.Count : 1)); // convert it to percentage
-                percentSum += queueRatio[i]; // sum percentages
-            }
-            for (int i = 0; i < cores.Count && queueRatio.Count >= 1; i++)
-            {
-                if (cores[i].GetIsFast())
+                if (c.GetQueueAmount() > 0)
                 {
-                    if (queueSum[i] <= minFast)
+                    allEmpty = true;
+                    break;
+                }
+            }
+
+            if (allEmpty)
+            {
+                if (desiredPercentFast > desiredPercentSlow)
+                {
+                    for(int i = 0; i < cores.Count; i++)
                     {
-                        minFast = queueSum[i];
-                        minFastIndex = i;
+                        if (cores[i].GetIsFast())
+                            return i;
                     }
-                    percentShownFast += queueRatio[i]; // add the ratio to totalDesired
                 }
                 else
                 {
-                    if (queueSum[i] <= minSlow)
+                    for (int i = 0; i < cores.Count; i++)
                     {
-                        minSlow = queueSum[i];
-                        minSlowIndex = i;
+                        if (!cores[i].GetIsFast())
+                            return i;
                     }
-                    percentShownSlow += queueRatio[i]; // add the ratio to totalDesired
                 }
             }
-            float percentShown = (percentShownFast + percentShownSlow >= 0) ? (percentShownFast / (percentShownFast + percentShownSlow)) : 0;
 
-            if (percentShown <= percentSystem)
-            {
-                index = minFastIndex;
-            }
-            else
-            {
-                index = minSlowIndex;
-            }
+
+            // Analyze queue size of fast and slow
 
             return index;
         }

@@ -87,92 +87,45 @@ namespace KernelTestingWPF
 
                     switch (policy)
                     {
-                        case (int)P_TYPE.LIMITED_QUEUE:
+                        case (int)P_TYPE.LIMITED_QUEUE: // done
                             for(int i = 0; i < CoreManager.TotalCoreNum(); i++)
                             {
                                 if (totalQueue.Count <= 0)
                                     break;
                                 if (CoreManager.GetQueueAmount(i) >= CoreManager.QueueLimit)
                                     continue;
-
                                 instruction = totalQueue[0];
                                 CoreManager.EnqueueAt(i, instruction);
                                 totalQueue.RemoveAt(0);
-
                                 listViewInstructions.Dispatcher.Invoke(new Action(() =>
                                 {
                                     listViewInstructions.Items.RemoveAt(1);
                                 }));
                             }
                             break;
-                        case (int)P_TYPE.RATIO_BASED:
-                            index = CoreManager.GetMinPercentageIndex();
-
+                        case (int)P_TYPE.RATIO_BASED: // close
+                            index = CoreManager.GetMinPercentageIndex(); // !FIX
                             instruction = totalQueue[0];
                             CoreManager.EnqueueAt(index, instruction);
                             totalQueue.RemoveAt(0);
-
                             listViewInstructions.Dispatcher.Invoke(new Action(() =>
                             {
                                 listViewInstructions.Items.RemoveAt(1);
                             }));
-
                             break;
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
-
+                            // Vaughan >= ghey
                             break;
-                        case (int)P_TYPE.TYPE_BASED:
+                        case (int)P_TYPE.TYPE_BASED: // done
                             instruction = totalQueue[0];
                             index = CoreManager.GetMinOfType(instruction.type);
-
                             CoreManager.EnqueueAt(index, instruction);
                             totalQueue.RemoveAt(0);
-
                             listViewInstructions.Dispatcher.Invoke(new Action(() =>
                             {
                                 listViewInstructions.Items.RemoveAt(1);
                             }));
                             break;
-
-
-
-
-                        /*
-                        case (int)P_TYPE.RATIO_BASED:
-                            //for all cores, if it is a fast core and it is not full, allocate this instruction
-                            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
-                            {
-                                if (CoreManager.IsFast(i))//&& !allCores[i].IsFull())
-                                {
-                                    Instruction instruction = totalQueue[0];
-                                    CoreManager.EnqueueAt(i, instruction);
-                                    totalQueue.RemoveAt(0); // dequeue
-
-                                    //listViewInstructions.Items.RemoveAt(1); // malarky
-                                    listViewInstructions.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        listViewInstructions.Items.RemoveAt(1);
-                                    }));
-                                    break;
-                                }
-                            }
-                            break;
-                        case (int)P_TYPE.FAST_SLOW_BUFFER: // TEST ROUND ROBIN
-                            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
-                            {
-                                if (totalQueue.Count <= 0)
-                                    break;
-                                Instruction instruction = totalQueue[0];
-                                CoreManager.EnqueueAt(i, instruction);
-                                totalQueue.RemoveAt(0);
-
-                                listViewInstructions.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    listViewInstructions.Items.RemoveAt(1);
-                                }));
-                            }
-                            break;
-                            // */
                     }
                     Thread.Sleep(800); // malarky
                 }
