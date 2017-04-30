@@ -61,7 +61,7 @@ namespace KernelTestingWPF
         public static int[] RAND_LO = { -250, -250, -250, -250, -250, -100, -100, -50, -50 };
         public static int[] RAND_HI = { 500, 500, 500, 700, 700, 1000, 1000, 1500, 1500 };
         public static int[] I_OP_TIME_F = { 1, 1, 1, 1, 1, 2, 2, 4, 4 }; // operation time of each instruction on a fast core
-        public static int[] I_OP_TIME_S = { 3, 3, 3, 3, 3, 7, 7, 10, 10 }; // operation time of each instruction on a slow core
+        public static int[] I_OP_TIME_S = { 2, 2, 2, 2, 2, 4, 4, 6, 6 }; // operation time of each instruction on a slow core
         public I_TYPE type;
         public int priority; // can be set by the scheduler
         public string instruction; // a hard copy of the actual instruction

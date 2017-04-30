@@ -29,7 +29,9 @@ namespace KernelTestingWPF
         int numFastCores;
         int numSlowCores;
         int policyType;
-        
+
+        public bool inputIsFast, outputIsFast, computationIsFast, registerIsFast;//
+        public float percentFast, percentSlow;//
 
         public string FileName
         {
@@ -186,18 +188,14 @@ namespace KernelTestingWPF
         private ListViewItem changeStatusListViewItem()
         {
             ListViewItem item = new ListViewItem();
-
             return item;
         }
 
         private ListViewItem changeExecListViewItem()
         {
             ListViewItem item = new ListViewItem();
-
             return item;
         }
-
-
 
         private void ClearScrollPanelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -206,10 +204,15 @@ namespace KernelTestingWPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            CoreManager.ChangeSpeed(-0.1f);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            CoreManager.ChangeSpeed(0.1f);
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
         {
 
         }

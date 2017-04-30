@@ -95,7 +95,16 @@ namespace KernelTestingWPF
             rp.PolicyType = cbPolicy.SelectedIndex;
             rp.FileName = fileName;
 
-            //
+            rp.computationIsFast = cbComputations.SelectedIndex == 1;
+            rp.registerIsFast = cbRegister.SelectedIndex == 1;
+            rp.inputIsFast = cbInput.SelectedIndex == 1;
+            rp.outputIsFast = cbOutput.SelectedIndex == 1;
+
+            float.TryParse(tBoxp1Fast.Text, out rp.percentFast);
+            float.TryParse(tBoxp1Slow.Text, out rp.percentSlow);
+
+            int.TryParse(tBoxP4.Text, out CoreManager.QueueLimit);
+            CoreManager.QueueLimit -= 1;
 
             rp.setPage();
 

@@ -27,7 +27,11 @@ namespace KernelTestingWPF
             JANK
         };
 
-        bool alive = true; // VERY MUCH malarky
+        //bool alive = true; // VERY MUCH malarky
+        
+
+        
+
 
         string filename;
         Thread scheduler;
@@ -61,7 +65,7 @@ namespace KernelTestingWPF
         }
         public void Stop()
         {
-            alive = false;
+            //alive = false;
             scheduler.Abort();
         }
 
@@ -78,8 +82,50 @@ namespace KernelTestingWPF
                 //Console.WriteLine("Scheduler|DoScheduling: starting to empty my queue.");
                 while (totalQueue.Count > 0)
                 {
+                    Instruction instruction = null;
+
                     switch (policy)
                     {
+                        case (int)P_TYPE.LIMITED_QUEUE:
+                            for(int i = 0; i < CoreManager.TotalCoreNum(); i++)
+                            {
+                                if (totalQueue.Count <= 0)
+                                    break;
+                                if (CoreManager.GetQueueAmount(i) >= CoreManager.QueueLimit)
+                                    continue;
+
+                                instruction = totalQueue[0];
+                                CoreManager.EnqueueAt(i, instruction);
+                                totalQueue.RemoveAt(0);
+
+                                listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                                {
+                                    listViewInstructions.Items.RemoveAt(1);
+                                }));
+                            }
+                            break;
+                        case (int)P_TYPE.RATIO_BASED:
+                            int index = CoreManager.GetMinPercentage();
+
+                            instruction = totalQueue[0];
+                            CoreManager.EnqueueAt(index, instruction);
+                            totalQueue.RemoveAt(0);
+
+                            listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                            {
+                                listViewInstructions.Items.RemoveAt(1);
+                            }));
+
+                            break;
+                        case (int)P_TYPE.FAST_SLOW_BUFFER:
+                            break;
+                        case (int)P_TYPE.TYPE_BASED:
+                            break;
+
+
+
+
+                        /*
                         case (int)P_TYPE.RATIO_BASED:
                             //for all cores, if it is a fast core and it is not full, allocate this instruction
                             for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
@@ -114,8 +160,9 @@ namespace KernelTestingWPF
                                 }));
                             }
                             break;
+                            // */
                     }
-                            Thread.Sleep(2000); // malarky
+                    Thread.Sleep(800); // malarky
                 }
             }
         }

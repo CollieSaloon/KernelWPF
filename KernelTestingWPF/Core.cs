@@ -26,6 +26,11 @@ namespace KernelTestingWPF
 
         private int totalTime = 0; // for report
 
+        public int GetQueueAmount()
+        {
+            return processorQueue.Count;
+        } 
+
         public Core(bool isFast, TextBlock tb, int index)
         {
             this.tb = tb;
@@ -36,9 +41,7 @@ namespace KernelTestingWPF
                 registers[i] = Instruction.CHEESE;
             }
             this.isFast = isFast;
-            process = new Thread(ExecuteInstructions);
-
-            
+            process = new Thread(ExecuteInstructions);            
 
         }
 
