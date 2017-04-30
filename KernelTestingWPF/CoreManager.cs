@@ -10,10 +10,9 @@ namespace KernelTestingWPF
 {
     class CoreManager
     {
-        static public float SpeedMultiplier = 2.0f;
+        static public float SpeedMultiplier = 0.5f;
         static public List<Core> cores = new List<Core>();
         private static int totalCoreNum = 0;
-
 
         public static void InitializeCores(int numFast, int numSlow, string filename, int policy,TextBlock txtInfo) // malarky
         {
@@ -22,7 +21,6 @@ namespace KernelTestingWPF
             totalCoreNum = numFast + numSlow;
 
             int index = 0;
-
             
 
             for (int i = 0; i < numFast; i++,index++) //add fast cores

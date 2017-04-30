@@ -56,3 +56,5 @@ C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\obj\Debug\KernelTestin
 C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.csproj.GenerateResource.Cache
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\FastSlowPage.g.cs
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\FastSlowPage.baml
+C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\obj\Debug\FastSlowPage.g.cs
+C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\obj\Debug\FastSlowPage.baml

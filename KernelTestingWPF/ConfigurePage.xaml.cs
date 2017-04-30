@@ -43,7 +43,7 @@ namespace KernelTestingWPF
 
         private void fillComboBoxes()
         {
-            for (int i = 1; i <= comboNum; i++)
+            for (int i = 0; i <= comboNum; i++)
             {
                 cbFastCores.Items.Add(i);
                 cbSlowCores.Items.Add(i);
@@ -90,10 +90,12 @@ namespace KernelTestingWPF
         {
             RunningPage rp = new RunningPage();
 
-            rp.NumFastCores = cbFastCores.SelectedIndex + 1;
-            rp.NumSlowCores = cbSlowCores.SelectedIndex + 1;
+            rp.NumFastCores = cbFastCores.SelectedIndex;
+            rp.NumSlowCores = cbSlowCores.SelectedIndex;
             rp.PolicyType = cbPolicy.SelectedIndex;
             rp.FileName = fileName;
+
+            //
 
             rp.setPage();
 
@@ -136,6 +138,8 @@ namespace KernelTestingWPF
 
             }
         }
+
+        // 
 
         private void HideStackPanels()
         {

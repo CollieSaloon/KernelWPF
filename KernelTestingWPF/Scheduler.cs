@@ -20,12 +20,11 @@ namespace KernelTestingWPF
         public const bool PRS_DEBUG = true;
         public enum P_TYPE // policy types
         {
-            ALL_FAST, // allocate every instruction to fast cores
-            ALL_SLOW, // allocate every instruction to slow cores
-            TYPE_DEPENDENT, // allocate inputs and registers to slow cores, outputs and math to fast
-            CORE_AVAILABILITY_F, // allocate as many as possible to fast, then slow
-            CORE_AVAILABILITY_S, // allocate as many as possible to slow, then fast
-            NUM_TYPES // placeholder for size
+            RATIO_BASED,
+            FAST_SLOW_BUFFER,
+            TYPE_BASED,
+            LIMITED_QUEUE,
+            JANK
         };
 
         bool alive = true; // VERY MUCH malarky
@@ -74,20 +73,20 @@ namespace KernelTestingWPF
 
             while (true)
             {
-                if (!alive)
-                    return;
+
+                Thread.Sleep(2000);
                 //Console.WriteLine("Scheduler|DoScheduling: starting to empty my queue.");
                 while (totalQueue.Count > 0)
                 {
                     switch (policy)
                     {
-                        case (int)P_TYPE.ALL_FAST:
+                        case (int)P_TYPE.RATIO_BASED:
                             //for all cores, if it is a fast core and it is not full, allocate this instruction
                             for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
                             {
                                 if (CoreManager.IsFast(i))//&& !allCores[i].IsFull())
-                                {                                    
-                                    Instruction instruction = totalQueue[0];                                    
+                                {
+                                    Instruction instruction = totalQueue[0];
                                     CoreManager.EnqueueAt(i, instruction);
                                     totalQueue.RemoveAt(0); // dequeue
 
@@ -96,23 +95,27 @@ namespace KernelTestingWPF
                                     {
                                         listViewInstructions.Items.RemoveAt(1);
                                     }));
-
-                            break;
+                                    break;
                                 }
                             }
                             break;
-                        case (int)P_TYPE.ALL_SLOW:
+                        case (int)P_TYPE.FAST_SLOW_BUFFER: // TEST ROUND ROBIN
+                            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
+                            {
+                                if (totalQueue.Count <= 0)
+                                    break;
+                                Instruction instruction = totalQueue[0];
+                                CoreManager.EnqueueAt(i, instruction);
+                                totalQueue.RemoveAt(0);
 
-
-                            break;
-                        case (int)P_TYPE.TYPE_DEPENDENT:
-                            break;
-                        default:
+                                listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                                {
+                                    listViewInstructions.Items.RemoveAt(1);
+                                }));
+                            }
                             break;
                     }
-                    if (!alive)
-                        return;
-                    Thread.Sleep(1500); // malarky
+                            Thread.Sleep(2000); // malarky
                 }
             }
         }
@@ -135,12 +138,9 @@ namespace KernelTestingWPF
             while (!reader.EndOfStream)
             {
                 string s = reader.ReadLine();
+                int ts = -1;
                 //if (PRS_DEBUG) Console.WriteLine("Scheduler|Parser: read Line: \"" + s + "\"");
                 //listViewInstructions.Dispatcher.BeginInvoke(((Action)() => { listViewInstructions.Items.Add(s); )));// malarky
-                listViewInstructions.Dispatcher.Invoke(new Action(() =>
-                {
-                    listViewInstructions.Items.Add(s);
-                }));
 
                     string[] sSplit = s.Split(' ');
                 //if (PRS_DEBUG) Console.WriteLine("Length of this Line: " + sSplit.Length);
@@ -164,6 +164,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Instruction.CHEESE;
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                     else if (sSplit[0] == "printc")
@@ -177,6 +178,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Instruction.CHEESE;
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                     else if (sSplit[0] == "print")
@@ -190,6 +192,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Instruction.CHEESE;
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                 }
@@ -206,6 +209,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Instruction.CHEESE;
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                     else if (sSplit[0] == "setrr")
@@ -219,6 +223,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Instruction.CHEESE;
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                 }
@@ -235,6 +240,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Int32.Parse(sSplit[3]);
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                     else if (sSplit[0] == "sub")
@@ -248,6 +254,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Int32.Parse(sSplit[3]);
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                     else if (sSplit[0] == "mul")
@@ -262,6 +269,7 @@ namespace KernelTestingWPF
                         temp.arg3 = Int32.Parse(sSplit[3]);
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                     else if (sSplit[0] == "div")
@@ -275,9 +283,15 @@ namespace KernelTestingWPF
                         temp.arg3 = Int32.Parse(sSplit[3]);
                         if (PRS_DEBUG) Console.WriteLine("type: {0}, arg1: {1}, arg2: {2}, arg3: {3}", temp.type, temp.arg1, temp.arg2, temp.arg3);
 
+                        ts = temp.timeStamp;
                         totalQueue.Add(temp);
                     }
                 }
+
+                listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                {
+                    listViewInstructions.Items.Add(ts + ": " + s);//
+                }));
             }
             if (PRS_DEBUG) Console.WriteLine("Scheduler|Parser: finished reading file \"" + filename + "\"\n");
         }

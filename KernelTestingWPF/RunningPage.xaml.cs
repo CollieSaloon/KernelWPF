@@ -57,21 +57,14 @@ namespace KernelTestingWPF
         {
             InitializeComponent();
         }
-        ~RunningPage()
-        {
-            scheduler.Stop();
 
-            CoreManager.StopCores();
-        }
-
-        private void InitializeCoresAndScheduler() // malarky
+        private void InitializeCoresAndScheduler()
         {
             int fastCount = 0;
             int slowCount = 0;
 
             scheduler = new Scheduler(fileName, policyType);//
             scheduler.listViewInstructions = listViewInstructions;
-            //AddListViews();
 
             CoreManager.InitializeCores(numFastCores, numSlowCores, fileName, policyType,txtInfo);
 

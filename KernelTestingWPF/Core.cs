@@ -22,7 +22,7 @@ namespace KernelTestingWPF
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
-        public bool alive = true; //
+        //public bool alive = true; //
 
         private int totalTime = 0; // for report
 
@@ -139,8 +139,8 @@ namespace KernelTestingWPF
             while (true)
             {
                 // VERY MUCH malarky
-                if (!alive)
-                    return;
+                //if (!alive)
+                    //return;
                 while (processorQueue.Count > 0) // if there are processes, do one then sleep
                 {
                     Instruction i = Dequeue();
@@ -149,8 +149,8 @@ namespace KernelTestingWPF
                     if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                     Thread.Sleep(500);
                     // VERY MUCH malarky
-                    if (!alive)
-                        return;
+                    //if (!alive)
+                        //return;
                 }
                 if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                 Thread.Sleep(500);
@@ -159,6 +159,8 @@ namespace KernelTestingWPF
 
         public void ProcessSingleInstruction(Instruction instruction)
         {
+            Random r = new Random();
+
             if (instruction == null)
             {
                 Console.WriteLine("Core|PSI: instruction is null!");
@@ -169,10 +171,20 @@ namespace KernelTestingWPF
                 instruction.type, instruction.arg1, instruction.arg2, instruction.arg3);
             if (DEBUG) Console.Write("Core|PSI: ");
 
-            int time = isFast ? (int)(Instruction.I_OP_TIME_F[(int)instruction.type] * 1000 * CoreManager.SpeedMultiplier) :
-                (int)(Instruction.I_OP_TIME_S[(int)instruction.type] * 1000 * CoreManager.SpeedMultiplier);
+            int time = isFast ? 
+                (int)((Instruction.I_OP_TIME_F[(int)instruction.type] * 1000) +
+                    r.Next(Instruction.RAND_LO[(int)instruction.type], Instruction.RAND_HI[(int)instruction.type]) * CoreManager.SpeedMultiplier) :
+                (int)((Instruction.I_OP_TIME_S[(int)instruction.type] * 1000) +
+                    r.Next(Instruction.RAND_LO[(int)instruction.type], Instruction.RAND_HI[(int)instruction.type]) * 1000 * CoreManager.SpeedMultiplier);
 
-            Thread.Sleep(time);
+            try
+            {
+                Thread.Sleep(time);
+            }
+            catch
+            {
+                ;
+            }
             totalTime += time;
 
             Console.WriteLine("Total time: " + totalTime);
@@ -235,24 +247,23 @@ namespace KernelTestingWPF
 
         public void Output(int output, bool asChar = false)
         {
-            // This will change to the WPF stuff later
-            
-            //Console.Write("\n>> ");
             if (!asChar)
             {
                 Console.WriteLine(output);
                 
                 new Thread(() => {
                          tb.Dispatcher.BeginInvoke((Action)(() =>
-                            tb.Text += output + "\n"));
+
+                             tb.Text = ">>" + output + "\n     " + (tb.Text.Length > 2 ? tb.Text.Substring(2) : tb.Text)
+                             ));
                      }).Start();
             }
             else
             {
                 Console.WriteLine(((char)output).ToString());
                 new Thread(() => {
-                        tb.Dispatcher.BeginInvoke((Action)(() =>
-                            tb.Text += ((char)output).ToString() + "\n"));
+                    tb.Dispatcher.BeginInvoke((Action)(() =>
+                        tb.Text = ">>" + ((char)output).ToString() + "\n     " + (tb.Text.Length > 2 ? tb.Text.Substring(2) : tb.Text)));
                     }).Start();
             }
             Console.WriteLine();
@@ -270,8 +281,6 @@ namespace KernelTestingWPF
 
         public void Stop()
         {
-            //process = null;
-            alive = false;
             process.Abort();
         }
     }

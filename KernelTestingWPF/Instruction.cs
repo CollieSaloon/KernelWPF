@@ -14,6 +14,9 @@ namespace KernelTestingWPF
         public const int NUM_REGISTERS = 10; // number of registers for each processor
         public const int CHEESE = 1010101; // this value indicates register is invalid
 
+        public int timeStamp = -1;
+        public static int runningTime = 0;
+
         public static string GetTypeString(I_TYPE i)
         {
             switch (i)
@@ -54,7 +57,9 @@ namespace KernelTestingWPF
             DIV, // takes in three registers
             NUM_TYPES // placeholder for size, also if an instruction is set to this, invalid
         };
-
+        
+        public static int[] RAND_LO = { -250, -250, -250, -250, -250, -100, -100, -50, -50 };
+        public static int[] RAND_HI = { 500, 500, 500, 700, 700, 1000, 1000, 1500, 1500 };
         public static int[] I_OP_TIME_F = { 1, 1, 1, 1, 1, 2, 2, 4, 4 }; // operation time of each instruction on a fast core
         public static int[] I_OP_TIME_S = { 3, 3, 3, 3, 3, 7, 7, 10, 10 }; // operation time of each instruction on a slow core
         public I_TYPE type;
@@ -68,6 +73,9 @@ namespace KernelTestingWPF
             arg1 = arg2 = arg3 = CHEESE;
             instruction = "";
             type = I_TYPE.NUM_TYPES;
+
+            runningTime++;
+            timeStamp = runningTime;
         }
     }
 }
