@@ -5,9 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
+using System.Windows.Controls;
 
 namespace KernelTestingWPF
 {
+    /*
+        new Thread(() => {
+                        tb.Dispatcher.BeginInvoke((Action)(() =>
+                            // do some UI thing (terminated by semicolon)
+                    }).Start();
+    // */
     class Scheduler
     {
         public const bool PRS_DEBUG = true;
@@ -21,26 +28,41 @@ namespace KernelTestingWPF
             NUM_TYPES // placeholder for size
         };
 
+        bool alive = true; // VERY MUCH malarky
+
         string filename;
         Thread scheduler;
         List<Instruction> totalQueue;
+        List<Core> cores;
         private int policy; // scheduling policy used by this core
         public int Policy
         {
             get; set;
         }
 
-        public Scheduler(List<Core> allCores, string filename, int policy = 0)
+        List<ListView> listViews;
+
+        public Scheduler(List<Core> allCores, List<ListView> lv, string filename, int policy = 0)
         {
+            listViews = lv;
             totalQueue = new List<Instruction>();
             this.policy = policy;
             scheduler = new Thread((() => { DoScheduling(allCores); }));
             this.filename = filename;
         }
+        ~Scheduler()
+        {
+            Stop();
+        }
 
         public void Start()
         {
             scheduler.Start();
+        }
+        public void Stop()
+        {
+            alive = false;
+            scheduler.Abort();
         }
 
         public void DoScheduling(List<Core> allCores)
@@ -51,6 +73,8 @@ namespace KernelTestingWPF
 
             while (true)
             {
+                if (!alive) // VERY MUCH malarky
+                    return;
                 //Console.WriteLine("Scheduler|DoScheduling: starting to empty my queue.");
                 while (totalQueue.Count > 0)
                 {
@@ -62,8 +86,17 @@ namespace KernelTestingWPF
                             {
                                 if (allCores[i].GetIsFast() && !allCores[i].IsFull())
                                 {
-                                    allCores[i].Enqueue(totalQueue[0]);
+                                    Instruction instruction = totalQueue[0];
+
+                                    if (i >= 0 && i < listViews.Count)
+                                        new Thread(() => {
+                                            listViews[i].Dispatcher.BeginInvoke((Action)(() =>
+                                                listViews[i].Items.Add(instruction.type)));
+                                        }).Start();
+
+                                    allCores[i].Enqueue(instruction);
                                     totalQueue.RemoveAt(0); // dequeue
+
                                     break;
                                 }
                             }
@@ -75,6 +108,8 @@ namespace KernelTestingWPF
                         default:
                             break;
                     }
+                    if (!alive) // VERY MUCH malarky
+                        return;
                 }
             }
         }

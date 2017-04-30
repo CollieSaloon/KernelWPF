@@ -10,7 +10,9 @@ namespace KernelTestingWPF
 {
     class Core
     {
-        TextBlock tb;
+        static List<bool> killCores = new List<bool>();
+        TextBlock tb;//
+        List<ListView> listViews; // staying null or something
         public const int QUEUE_SIZE = 100;
         public const bool DEBUG = false;
         public const bool SLP_DEBUG = false;
@@ -19,10 +21,12 @@ namespace KernelTestingWPF
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
+        int id = -1; // malarky
 
-        public Core(bool isFast, TextBlock tb)
+        public Core(bool isFast, TextBlock tb, List<ListView> lv)
         {
-            this.tb = tb; // malarky
+            listViews = lv;
+            this.tb = tb;
             processorQueue = new List<Instruction>();
             registers = new int[Instruction.NUM_REGISTERS];
             for (int i = 0; i < registers.Length; i++)
@@ -31,6 +35,11 @@ namespace KernelTestingWPF
             }
             this.isFast = isFast;
             process = new Thread(ExecuteInstructions);
+            
+            // VERY MUCH malarky
+            killCores.Add(new bool());
+            killCores[killCores.Count - 1] = false;
+            id = killCores.Count - 1;
         }
 
         public bool IsFull() // we're not using this except for that one policy that cares abot queue size
@@ -79,7 +88,9 @@ namespace KernelTestingWPF
         {
             while (true)
             {
-                //Console.WriteLine("Empty queue");
+                // VERY MUCH malarky
+                if (killCores[id])
+                    return;
                 while (processorQueue.Count > 0) // if there are processes, do one then sleep
                 {
                     Instruction i = Dequeue();
@@ -87,6 +98,9 @@ namespace KernelTestingWPF
                         ProcessSingleInstruction(i);
                     if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                     Thread.Sleep(500);
+                    // VERY MUCH malarky
+                    if (killCores[id])
+                        return;
                 }
                 if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                 Thread.Sleep(500);
@@ -152,33 +166,38 @@ namespace KernelTestingWPF
                     break;
                 default:
                     if (DEBUG) Console.WriteLine("Unrecognized Instruction!");
-                    break;
+                    return;
             }
+            // remove a displayed item from the list
+            //*
+            if (id >= 0 && id < listViews.Count)
+                new Thread(() => {
+                    listViews[id].Dispatcher.BeginInvoke((Action)(() =>
+                        listViews[id].Items.RemoveAt(1))); // not the title!
+                }).Start();
+                // */
         }
 
         public void Output(int output, bool asChar = false)
         {
             // This will change to the WPF stuff later
-
             
-            Console.Write("\n>> ");
+            //Console.Write("\n>> ");
             if (!asChar)
             {
                 Console.WriteLine(output);
                 
-                new Thread(
-                     () =>
-                     {
-                         tb.Dispatcher.BeginInvoke((Action)(() => tb.Text += output + "\n"));
+                new Thread(() => {
+                         tb.Dispatcher.BeginInvoke((Action)(() =>
+                            tb.Text += output + "\n"));
                      }).Start();
             }
             else
             {
                 Console.WriteLine(((char)output).ToString());
-                new Thread(
-                    () =>
-                    {
-                        tb.Dispatcher.BeginInvoke((Action)(() => tb.Text += ((char)output).ToString() + "\n"));
+                new Thread(() => {
+                        tb.Dispatcher.BeginInvoke((Action)(() =>
+                            tb.Text += ((char)output).ToString() + "\n"));
                     }).Start();
             }
             Console.WriteLine();
@@ -192,6 +211,13 @@ namespace KernelTestingWPF
         public void Start() // anything else that needs to happen here
         {
             process.Start();
+        }
+
+        public void Stop()
+        {
+            //process = null;
+            killCores[id] = true;
+            process.Abort();
         }
     }
 }
