@@ -33,6 +33,8 @@ namespace KernelTestingWPF
         string filename;
         Thread scheduler;
         List<Instruction> totalQueue;
+        public ListView listViewInstructions;
+        
         private int policy; // scheduling policy used by this core
         public int Policy
         {
@@ -46,7 +48,7 @@ namespace KernelTestingWPF
             totalQueue = new List<Instruction>();
             this.policy = policy;   
             scheduler = new Thread((() => { DoScheduling(); }));
-            scheduler.SetApartmentState(ApartmentState.STA);
+            //scheduler.SetApartmentState(ApartmentState.STA);
             this.filename = filename;
         }
         ~Scheduler()
@@ -72,7 +74,7 @@ namespace KernelTestingWPF
 
             while (true)
             {
-                if (!alive) // VERY MUCH malarky
+                if (!alive)
                     return;
                 //Console.WriteLine("Scheduler|DoScheduling: starting to empty my queue.");
                 while (totalQueue.Count > 0)
@@ -84,25 +86,33 @@ namespace KernelTestingWPF
                             for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
                             {
                                 if (CoreManager.IsFast(i))//&& !allCores[i].IsFull())
-                                {
-                                    Instruction instruction = totalQueue[0];
-
-                                    CoreManager.EnqueueAt(i,instruction);
+                                {                                    
+                                    Instruction instruction = totalQueue[0];                                    
+                                    CoreManager.EnqueueAt(i, instruction);
                                     totalQueue.RemoveAt(0); // dequeue
 
-                                    break;
+                                    //listViewInstructions.Items.RemoveAt(1); // malarky
+                                    listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                                    {
+                                        listViewInstructions.Items.RemoveAt(1);
+                                    }));
+
+                            break;
                                 }
                             }
                             break;
                         case (int)P_TYPE.ALL_SLOW:
+
+
                             break;
                         case (int)P_TYPE.TYPE_DEPENDENT:
                             break;
                         default:
                             break;
                     }
-                    if (!alive) // VERY MUCH malarky
+                    if (!alive)
                         return;
+                    Thread.Sleep(1500); // malarky
                 }
             }
         }
@@ -126,8 +136,13 @@ namespace KernelTestingWPF
             {
                 string s = reader.ReadLine();
                 //if (PRS_DEBUG) Console.WriteLine("Scheduler|Parser: read Line: \"" + s + "\"");
+                //listViewInstructions.Dispatcher.BeginInvoke(((Action)() => { listViewInstructions.Items.Add(s); )));// malarky
+                listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                {
+                    listViewInstructions.Items.Add(s);
+                }));
 
-                string[] sSplit = s.Split(' ');
+                    string[] sSplit = s.Split(' ');
                 //if (PRS_DEBUG) Console.WriteLine("Length of this Line: " + sSplit.Length);
                 //if (PRS_DEBUG) Console.Write("Type of this Line: ");
                 //if (PRS_DEBUG) Console.WriteLine(sSplit[0]);

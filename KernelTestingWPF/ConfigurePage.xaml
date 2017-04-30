@@ -48,7 +48,7 @@
                 </StackPanel>
                 <StackPanel  Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Margin="0,0,15,0" Width="150" TextWrapping="Wrap" Text="Policy Type for the execution of you program:  " />
-                    <ComboBox Name="cbPolicy" Background="White" BorderBrush="Black" Width="100" VerticalContentAlignment="Center" />
+                    <ComboBox Name="cbPolicy" Background="White" BorderBrush="Black" Width="100" VerticalContentAlignment="Center" SelectionChanged="cbPolicy_SelectionChanged" />
                 </StackPanel>
             </Grid>
         </Grid>
@@ -57,7 +57,33 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Name="txtInfo" Text="InfoText" Margin="5,0,0,0" />
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Visibility="Collapsed" Name="Policy1StackPanel" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock Text="Fast Percent: "/>
+                    <TextBox Name="tBoxp1Fast" VerticalAlignment="Center" Width="100"/>
+                    <TextBlock Text="Slow Percent: " />
+                    <TextBox Name="tBoxp1Slow" VerticalAlignment="Center" Width="100"/>
+                </StackPanel>
+                <StackPanel Visibility="Collapsed" VerticalAlignment="Center" Name="Policy3StackPanel" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock Text="Input: "/>
+                    <ComboBox Name="cbInput" VerticalAlignment="Center" Width="70" />
+                    <TextBlock Text="Output: " />
+                    <ComboBox Name="cbOutput" VerticalAlignment="Center" Width="70" />
+                    <TextBlock Text="Computations: "/>
+                    <ComboBox Name="cbComputations" VerticalAlignment="Center" Width="70" />
+                    <TextBlock Text="Registers: " />
+                    <ComboBox Name="cbRegister" VerticalAlignment="Center" Width="70"/>
+                </StackPanel>
+                <StackPanel Visibility="Collapsed" VerticalAlignment="Center" Name="Policy4StackPanel" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock  Text="Size Limit of the Queue: " />
+                    <TextBox Name="tBoxP4"  VerticalAlignment="Center" Width="100" />
+                </StackPanel>
+            </Grid>
             <Button Name="GoToRunningButton" Click="GoToRunningButton_Click" Background="White" BorderBrush="Black" Width="90" 
                     Content="Run Program" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="2" />
         </Grid>

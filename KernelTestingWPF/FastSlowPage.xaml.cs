@@ -12,15 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
 
 namespace KernelTestingWPF
 {
     /// <summary>
-    /// Interaction logic for Page1.xaml
+    /// Interaction logic for FastSlowPage.xaml
     /// </summary>
-    public partial class RunningPage : Page
+    public partial class FastSlowPage : Page
     {
+        
+
         Scheduler scheduler; // malarky
 
         List<ListView> listviews = new List<ListView>();
@@ -29,7 +30,8 @@ namespace KernelTestingWPF
         int numFastCores;
         int numSlowCores;
         int policyType;
-        
+
+
 
         public string FileName
         {
@@ -53,11 +55,11 @@ namespace KernelTestingWPF
             set { policyType = value; }
         }
 
-        public RunningPage()
+        public FastSlowPage()
         {
             InitializeComponent();
         }
-        ~RunningPage()
+        ~FastSlowPage()
         {
             scheduler.Stop();
 
@@ -70,26 +72,26 @@ namespace KernelTestingWPF
             int slowCount = 0;
 
             scheduler = new Scheduler(fileName, policyType);//
-            scheduler.listViewInstructions = listViewInstructions;
+
             //AddListViews();
 
-            CoreManager.InitializeCores(numFastCores, numSlowCores, fileName, policyType,txtInfo);
+            CoreManager.InitializeCores(numFastCores, numSlowCores, fileName, policyType, txtInfo);
 
             for (int i = 0; i < CoreManager.cores.Count; i++)
             {
                 ListView lv = new ListView();
 
-                if(CoreManager.IsFast(i))
+                if (CoreManager.IsFast(i))
                 {
                     fastCount++;
-                    CoreManager.cores[i].SetCoreListView(lv,fastCount);
+                    CoreManager.cores[i].SetCoreListView(lv, fastCount);
                 }
                 else
                 {
                     slowCount++;
-                    CoreManager.cores[i].SetCoreListView(lv,slowCount);
+                    CoreManager.cores[i].SetCoreListView(lv, slowCount);
                 }
-                              
+
 
                 ScrollStackPanel.Children.Add(lv);
             }
@@ -98,8 +100,6 @@ namespace KernelTestingWPF
             myScrollView.Content = ScrollStackPanel;
 
             scheduler.Start();
-
-            //Thread.Sleep(5000);
 
             CoreManager.StartCores();
 
@@ -129,7 +129,6 @@ namespace KernelTestingWPF
                 string[] isolated = fileName.Split('\\');
                 txtTitle.Text += isolated[isolated.Length - 1];
                 InitializeCoresAndScheduler();
-                //
                 //AddListViews();
             }
         }
@@ -220,5 +219,7 @@ namespace KernelTestingWPF
         {
 
         }
+
+      
     }
 }

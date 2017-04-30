@@ -16,14 +16,15 @@ namespace KernelTestingWPF
         TextBlock tb;//
         public ListView listView; // staying null or something
         public const int QUEUE_SIZE = 100;
-        public const bool DEBUG = false;
-        public const bool SLP_DEBUG = false;
-        public static int SPEED_MULTIPLIER = 1; // used for increase/decrease execution speed scale
+        public const bool DEBUG = true;
+        public const bool SLP_DEBUG = true;
         private List<Instruction> processorQueue; // queue of instructions to execute
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
-        public bool alive = false; //
+        public bool alive = true; //
+
+        private int totalTime = 0; // for report
 
         public Core(bool isFast, TextBlock tb, int index)
         {
@@ -48,7 +49,7 @@ namespace KernelTestingWPF
             ListViewItem item = new ListViewItem();
             item.Content = string.Format("{0} Core #{1}", isFast ? "Fast" : "Slow", index);
 
-            lv.Items.Add(item);
+            listView.Items.Add(item);
         }
 
         public bool IsFull() // we're not using this except for that one policy that cares abot queue size
@@ -79,38 +80,29 @@ namespace KernelTestingWPF
         {
             processorQueue.Add(instruction);
 
-            //ListViewItem item = new ListViewItem();
+            string item;
+
             
-            //if(isFast)
-            //{
-            //    if(listView.Items.Count % 2 == 0)
-            //    {
-            //        item.Background = new SolidColorBrush(Colors.IndianRed);
-            //    }
-            //}
-            //else
-            //{
-            //    if (listView.Items.Count % 2 == 0)
-            //    {
-            //        item.Background = new SolidColorBrush(Colors.AliceBlue);
-            //    }
-            //}
 
-            //if(instruction.type >= 0 && instruction.type < Instruction.I_TYPE.SET_REG)
-            //{
-            //    item.Content = string.Format("{0}: {1}", Instruction.GetTypeString(instruction.type), instruction.arg1);
-            //}
-            //else if(instruction.type < Instruction.I_TYPE.ADD)
-            //{
-            //    item.Content = string.Format("{0}: {1}, {2}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2);
-            //}
-            //else if(instruction.type <= Instruction.I_TYPE.DIV)
-            //{
-            //    item.Content = string.Format("{0}: {1}, {2}, {3}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2, instruction.arg3);
-            //}
+            if (instruction.type >= 0 && instruction.type < Instruction.I_TYPE.SET_REG)
+            {
+                item = string.Format("{0}: {1}", Instruction.GetTypeString(instruction.type), instruction.arg1);
+            }
+            else if (instruction.type < Instruction.I_TYPE.ADD)
+            {
+                item = string.Format("{0}: {1}, {2}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2);
+            }
+            else if (instruction.type <= Instruction.I_TYPE.DIV)
+            {
+                item = string.Format("{0}: {1}, {2}, {3}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2, instruction.arg3);
+            }
+            else
+            {
+                item = "malarky";
+            }
 
-
-            //AddListViewItem(item);
+            Application.Current.Dispatcher.BeginInvoke((Action)(() => { listView.Items.Add(item); }));
+            
 
             return true;
         }
@@ -177,8 +169,13 @@ namespace KernelTestingWPF
                 instruction.type, instruction.arg1, instruction.arg2, instruction.arg3);
             if (DEBUG) Console.Write("Core|PSI: ");
 
-            Thread.Sleep(isFast ? Instruction.I_OP_TIME_F[(int)instruction.type] * 1000 :
-                Instruction.I_OP_TIME_S[(int)instruction.type] * 1000);
+            int time = isFast ? (int)(Instruction.I_OP_TIME_F[(int)instruction.type] * 1000 * CoreManager.SpeedMultiplier) :
+                (int)(Instruction.I_OP_TIME_S[(int)instruction.type] * 1000 * CoreManager.SpeedMultiplier);
+
+            Thread.Sleep(time);
+            totalTime += time;
+
+            Console.WriteLine("Total time: " + totalTime);
 
             switch (instruction.type)
             {

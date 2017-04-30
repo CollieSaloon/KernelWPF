@@ -25,6 +25,8 @@ namespace KernelTestingWPF
 
         int comboNum = 5;
         string fileName;
+
+       
         
 
         public ConfigurePage()
@@ -47,18 +49,40 @@ namespace KernelTestingWPF
                 cbSlowCores.Items.Add(i);
             }
 
-            cbPolicy.Items.Add("Policy 1");
-            cbPolicy.Items.Add("Policy 2");
-            cbPolicy.Items.Add("Policy 3");
+            cbPolicy.Items.Add("Ratio Based");
+            cbPolicy.Items.Add("Fast/Slow Brother");
+            cbPolicy.Items.Add("Type-Based");
+            cbPolicy.Items.Add("Limited Queue");
 
+            cbInput.Items.Add("Fast");
+            cbInput.Items.Add("Slow");
+            cbOutput.Items.Add("Fast");
+            cbOutput.Items.Add("Slow");
+            cbComputations.Items.Add("Fast");
+            cbComputations.Items.Add("Slow");
+            cbRegister.Items.Add("Fast");
+            cbRegister.Items.Add("Slow");
+
+
+            setComboIndexes();
+            
+        }
+
+        private void setComboIndexes()
+        {
             cbFastCores.SelectedIndex = 0;
             cbSlowCores.SelectedIndex = 0;
             cbPolicy.SelectedIndex = 0;
+            cbComputations.SelectedIndex = 0;
+            cbInput.SelectedIndex = 0;
+            cbOutput.SelectedIndex = 0;
+            cbRegister.SelectedIndex = 0;
+
         }
 
         private void clearText()
         {
-            txtInfo.Text = "";
+            //txtInfo.Text = "";
             txtProgram.Text = "";
         }
 
@@ -91,5 +115,33 @@ namespace KernelTestingWPF
             }
         }
 
+        private void cbPolicy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HideStackPanels();
+
+            if(cbPolicy.SelectedIndex == 0)
+            {
+                Policy1StackPanel.Visibility = Visibility.Visible;
+            }
+            else if(cbPolicy.SelectedIndex == 2)
+            {
+                Policy3StackPanel.Visibility = Visibility.Visible;
+            }
+            else if(cbPolicy.SelectedIndex == 3)
+            {
+                Policy4StackPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+
+            }
+        }
+
+        private void HideStackPanels()
+        {
+            Policy1StackPanel.Visibility = Visibility.Collapsed;
+            Policy3StackPanel.Visibility = Visibility.Collapsed;
+            Policy4StackPanel.Visibility = Visibility.Collapsed;
+        }
     }
 }

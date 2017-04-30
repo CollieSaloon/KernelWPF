@@ -10,7 +10,7 @@ namespace KernelTestingWPF
 {
     class CoreManager
     {
-
+        static public float SpeedMultiplier = 2.0f;
         static public List<Core> cores = new List<Core>();
         private static int totalCoreNum = 0;
 
@@ -49,7 +49,10 @@ namespace KernelTestingWPF
         public static void StartCores()
         {
             foreach (Core c in cores)
+            {
+                Console.WriteLine("Starting Core!");
                 c.Start();
+            }
         }
 
         public static void StopCores()
@@ -61,7 +64,7 @@ namespace KernelTestingWPF
         }
 
         public static void EnqueueAt(int index, Instruction instruction)
-        {
+        { 
             cores[index].Enqueue(instruction);
         }
 
