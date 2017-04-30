@@ -14,10 +14,16 @@ namespace KernelTestingWPF
         static public List<Core> cores = new List<Core>();
         private static int totalCoreNum = 0;
         public static int QueueLimit = 1;
+        public static int percentFast, percentSlow;
 
         public static void ChangeSpeed(float dspeed)
         {
             SpeedMultiplier += dspeed;
+        }
+        public static void SetRatio(int fast, int slow)
+        {
+            percentFast = fast;
+            percentSlow = slow;
         }
 
         public static void InitializeCores(int numFast, int numSlow, string filename, int policy,TextBlock txtInfo) // malarky
@@ -72,63 +78,69 @@ namespace KernelTestingWPF
             return index;
         }
 
-        public static int GetMinPercentage(bool restrict = false, bool fast = false)
+        public static int GetMinPercentageIndex()
         {
-            List<float> result = new List<float>();
-            List<int> indices = new List<int>();
             int index = -1;
+            List<float> queueRatio = new List<float>();
+            List<int> queueSum = new List<int>();
 
-            if (restrict)
+            float percentShownFast = 0;
+            float percentShownSlow = 0;
+
+            float percentCores = 0;
+            float percentSystem= percentFast / (percentFast + percentSlow);
+            //float percentSystemSlow = percentSlow / (percentFast + percentSlow);
+            float percentSum = 0;
+
+            int minFast, minSlow, minFastIndex, minSlowIndex;
+            minFast = minSlow = 100000;
+            minFastIndex = minSlowIndex = -1;
+            for (int i = 0; i < cores.Count; i++)
             {
-                int total = 0;
-                for (int i = 0, j = 0; i < cores.Count; i++) // first count
+                queueSum.Add(cores[i].GetQueueAmount()); // get queue count
+            }
+            for (int i = 0; i < cores.Count; i++)
+            {
+                queueRatio.Add(queueSum[i] / (queueSum.Count >= 1 ? queueSum.Count : 1)); // convert it to percentage
+                percentSum += queueRatio[i]; // sum percentages
+            }
+            for (int i = 0; i < cores.Count && queueRatio.Count >= 1; i++)
+            {
+                if (cores[i].GetIsFast())
                 {
-                    if (cores[i].GetIsFast() != fast)
-                        continue;
-
-                    result.Add(new float());
-                    indices.Add(i);
-
-                    result[j] = cores[i].GetQueueAmount();
-                    total += (int)result[j];
-                    j++;
+                    if (queueSum[i] <= minFast)
+                    {
+                        minFast = queueSum[i];
+                        minFastIndex = i;
+                    }
+                    percentShownFast += queueRatio[i]; // add the ratio to totalDesired
                 }
-                for (int i = 0; i < result.Count; i++) // then get proportions
+                else
                 {
-                    result[i] /= result.Count;
+                    if (queueSum[i] <= minSlow)
+                    {
+                        minSlow = queueSum[i];
+                        minSlowIndex = i;
+                    }
+                    percentShownSlow += queueRatio[i]; // add the ratio to totalDesired
                 }
+            }
+            float percentShown = (percentShownFast + percentShownSlow >= 0) ? (percentShownFast / (percentShownFast + percentShownSlow)) : 0;
+
+            if (percentShown <= percentSystem)
+            {
+                index = minFastIndex;
             }
             else
             {
-                int total = 0;
-                for (int i = 0; i < cores.Count; i++) // first count
-                {
-                    result.Add(new float());
-                    indices.Add(i);
-                    result[i] = cores[i].GetQueueAmount();
-                    total += (int)result[i];
-                }
-                for (int i = 0; i < result.Count; i++) // then get proportions
-                {
-                    result[i] /= result.Count;
-                }
-            }
-
-            float min = 100000;
-
-            for (int i = 0; i < result.Count; i++)
-            {
-                if (result[i] < min)
-                {
-                    min = result[i];
-                    index = indices[i];
-                }
+                index = minSlowIndex;
             }
 
             return index;
         }
 
         // used for that stuff
+        /*
         public static List<float> GetCorePercentages(bool restrict=false, bool fast=false)
         {
             List<float> result = new List<float>();
@@ -168,6 +180,7 @@ namespace KernelTestingWPF
 
             return result;
         }
+        // */
 
         public static void StopCores()
         {

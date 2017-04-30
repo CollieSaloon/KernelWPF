@@ -16,13 +16,12 @@ namespace KernelTestingWPF
         TextBlock tb;//
         public ListView listView; // staying null or something
         public const int QUEUE_SIZE = 100;
-        public const bool DEBUG = true;
-        public const bool SLP_DEBUG = true;
+        public const bool DEBUG = false;
+        public const bool SLP_DEBUG = false;
         private List<Instruction> processorQueue; // queue of instructions to execute
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
-        //public bool alive = true; //
 
         private int totalTime = 0; // for report
 
@@ -66,17 +65,10 @@ namespace KernelTestingWPF
 
         private void AddListViewItem(ListViewItem item)
         {
-            //new Thread(() =>
-            //{
-            //    listView.Dispatcher.BeginInvoke((Action)(() =>
-            //        listView.Items.Add(item)));// do some UI thing (terminated by semicolon)
-            //}).Start();
-
            Application.Current.Dispatcher.Invoke(new Action(() =>
            {
                listView.Items.Add(item);
            }));
-           
         }
 
         public bool Enqueue(Instruction instruction) // used by scheduler when finished // CHANGE THIS
@@ -105,7 +97,6 @@ namespace KernelTestingWPF
             }
 
             Application.Current.Dispatcher.BeginInvoke((Action)(() => { listView.Items.Add(item); }));
-            
 
             return true;
         }
@@ -115,7 +106,6 @@ namespace KernelTestingWPF
             Instruction result = null;
             if (processorQueue.Count >= 1)
             {
-                //*
                 try
                 {
                     result = processorQueue[0];
@@ -125,7 +115,6 @@ namespace KernelTestingWPF
                 {
                     Console.WriteLine(e);
                 }
-                // */
             }
             return result;
         }
@@ -141,9 +130,6 @@ namespace KernelTestingWPF
         {
             while (true)
             {
-                // VERY MUCH malarky
-                //if (!alive)
-                    //return;
                 while (processorQueue.Count > 0) // if there are processes, do one then sleep
                 {
                     Instruction i = Dequeue();
@@ -151,9 +137,6 @@ namespace KernelTestingWPF
                         ProcessSingleInstruction(i);
                     if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                     Thread.Sleep(500);
-                    // VERY MUCH malarky
-                    //if (!alive)
-                        //return;
                 }
                 if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                 Thread.Sleep(500);
