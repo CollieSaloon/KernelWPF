@@ -44,21 +44,14 @@
 
                 </StackPanel>
             </ScrollViewer>
-            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Button Name="AddListViewButton" Click="AddListViewButton_Click" Grid.Row="2" Grid.Column="1" 
-                    Height="20" Width="80" Margin="0,0,5,0"
-                    Content="Add ListView" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                <Button Name="ClearScrollPanelButton" Click="ClearScrollPanelButton_Click" Grid.Row="2" Grid.Column="1"
-                    Height="20" Width="100"
-                    Content="Clear ScrollView" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid> 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ScrollViewer>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <TextBlock Name="txtInfo" Text="InfoText" Margin="5,0,0,0" />
             </ScrollViewer>
             <Button Name="GoToReportButton" Click="GoToReportButton_Click"

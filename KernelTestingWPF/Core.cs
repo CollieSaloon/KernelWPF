@@ -5,14 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Controls;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace KernelTestingWPF
 {
     class Core
     {
-        static List<bool> killCores = new List<bool>();
         TextBlock tb;//
-        List<ListView> listViews; // staying null or something
+        public ListView listView; // staying null or something
         public const int QUEUE_SIZE = 100;
         public const bool DEBUG = false;
         public const bool SLP_DEBUG = false;
@@ -21,12 +23,10 @@ namespace KernelTestingWPF
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
-        int id = -1; // malarky
-        public int GetId() { return id; }
+        public bool alive = false; //
 
-        public Core(bool isFast, TextBlock tb, List<ListView> lv)
+        public Core(bool isFast, TextBlock tb, int index)
         {
-            listViews = lv;
             this.tb = tb;
             processorQueue = new List<Instruction>();
             registers = new int[Instruction.NUM_REGISTERS];
@@ -36,11 +36,19 @@ namespace KernelTestingWPF
             }
             this.isFast = isFast;
             process = new Thread(ExecuteInstructions);
+
             
-            // VERY MUCH malarky
-            killCores.Add(new bool());
-            killCores[killCores.Count - 1] = false;
-            id = killCores.Count - 1;
+
+        }
+
+        public void SetCoreListView(ListView lv, int index)
+        {
+            listView = lv;
+
+            ListViewItem item = new ListViewItem();
+            item.Content = string.Format("{0} Core #{1}", isFast ? "Fast" : "Slow", index);
+
+            lv.Items.Add(item);
         }
 
         public bool IsFull() // we're not using this except for that one policy that cares abot queue size
@@ -52,9 +60,58 @@ namespace KernelTestingWPF
             return processorQueue.Count == 0;
         }
 
+        private void AddListViewItem(ListViewItem item)
+        {
+            //new Thread(() =>
+            //{
+            //    listView.Dispatcher.BeginInvoke((Action)(() =>
+            //        listView.Items.Add(item)));// do some UI thing (terminated by semicolon)
+            //}).Start();
+
+           Application.Current.Dispatcher.Invoke(new Action(() =>
+           {
+               listView.Items.Add(item);
+           }));
+           
+        }
+
         public bool Enqueue(Instruction instruction) // used by scheduler when finished // CHANGE THIS
         {
             processorQueue.Add(instruction);
+
+            //ListViewItem item = new ListViewItem();
+            
+            //if(isFast)
+            //{
+            //    if(listView.Items.Count % 2 == 0)
+            //    {
+            //        item.Background = new SolidColorBrush(Colors.IndianRed);
+            //    }
+            //}
+            //else
+            //{
+            //    if (listView.Items.Count % 2 == 0)
+            //    {
+            //        item.Background = new SolidColorBrush(Colors.AliceBlue);
+            //    }
+            //}
+
+            //if(instruction.type >= 0 && instruction.type < Instruction.I_TYPE.SET_REG)
+            //{
+            //    item.Content = string.Format("{0}: {1}", Instruction.GetTypeString(instruction.type), instruction.arg1);
+            //}
+            //else if(instruction.type < Instruction.I_TYPE.ADD)
+            //{
+            //    item.Content = string.Format("{0}: {1}, {2}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2);
+            //}
+            //else if(instruction.type <= Instruction.I_TYPE.DIV)
+            //{
+            //    item.Content = string.Format("{0}: {1}, {2}, {3}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2, instruction.arg3);
+            //}
+
+
+            //AddListViewItem(item);
+
             return true;
         }
 
@@ -90,7 +147,7 @@ namespace KernelTestingWPF
             while (true)
             {
                 // VERY MUCH malarky
-                if (killCores[id])
+                if (!alive)
                     return;
                 while (processorQueue.Count > 0) // if there are processes, do one then sleep
                 {
@@ -100,7 +157,7 @@ namespace KernelTestingWPF
                     if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
                     Thread.Sleep(500);
                     // VERY MUCH malarky
-                    if (killCores[id])
+                    if (!alive)
                         return;
                 }
                 if (SLP_DEBUG) Console.WriteLine("Core|Sleep");
@@ -171,10 +228,10 @@ namespace KernelTestingWPF
             }
             // remove a displayed item from the list
             //*
-            if (id >= 0 && id < listViews.Count)
+            
                 new Thread(() => {
-                    listViews[id].Dispatcher.BeginInvoke((Action)(() =>
-                        listViews[id].Items.RemoveAt(1))); // not the title!
+                    listView.Dispatcher.BeginInvoke((Action)(() =>
+                        listView.Items.RemoveAt(1))); // not the title!
                 }).Start();
                 // */
         }
@@ -217,7 +274,7 @@ namespace KernelTestingWPF
         public void Stop()
         {
             //process = null;
-            killCores[id] = true;
+            alive = false;
             process.Abort();
         }
     }

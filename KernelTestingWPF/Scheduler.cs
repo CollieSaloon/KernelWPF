@@ -33,21 +33,20 @@ namespace KernelTestingWPF
         string filename;
         Thread scheduler;
         List<Instruction> totalQueue;
-        List<Core> cores;
         private int policy; // scheduling policy used by this core
         public int Policy
         {
             get; set;
         }
 
-        List<ListView> listViews;
+        
 
-        public Scheduler(List<Core> allCores, List<ListView> lv, string filename, int policy = 0)
+        public Scheduler(string filename, int policy = 0)
         {
-            listViews = lv;
             totalQueue = new List<Instruction>();
-            this.policy = policy;
-            scheduler = new Thread((() => { DoScheduling(allCores); }));
+            this.policy = policy;   
+            scheduler = new Thread((() => { DoScheduling(); }));
+            scheduler.SetApartmentState(ApartmentState.STA);
             this.filename = filename;
         }
         ~Scheduler()
@@ -65,8 +64,8 @@ namespace KernelTestingWPF
             scheduler.Abort();
         }
 
-        public void DoScheduling(List<Core> allCores)
-        {
+        public void DoScheduling()
+        { 
             //if (PRS_DEBUG) Console.WriteLine("Scheduler|DoScheduling: please enter a filename:");
             //string s = Console.ReadLine();
             ParseForInstructions(filename);
@@ -82,19 +81,13 @@ namespace KernelTestingWPF
                     {
                         case (int)P_TYPE.ALL_FAST:
                             //for all cores, if it is a fast core and it is not full, allocate this instruction
-                            for (int i = 0; i < allCores.Count; i++)
+                            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
                             {
-                                if (allCores[i].GetIsFast())//&& !allCores[i].IsFull())
+                                if (CoreManager.IsFast(i))//&& !allCores[i].IsFull())
                                 {
                                     Instruction instruction = totalQueue[0];
 
-                                    if (i >= 0 && i < listViews.Count)
-                                        new Thread(() => {
-                                            listViews[i].Dispatcher.BeginInvoke((Action)(() =>
-                                                listViews[i].Items.Add(instruction.type)));
-                                        }).Start();
-
-                                    allCores[i].Enqueue(instruction);
+                                    CoreManager.EnqueueAt(i,instruction);
                                     totalQueue.RemoveAt(0); // dequeue
 
                                     break;

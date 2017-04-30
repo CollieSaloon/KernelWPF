@@ -14,6 +14,33 @@ namespace KernelTestingWPF
         public const int NUM_REGISTERS = 10; // number of registers for each processor
         public const int CHEESE = 1010101; // this value indicates register is invalid
 
+        public static string GetTypeString(I_TYPE i)
+        {
+            switch (i)
+            {
+                case I_TYPE.PRINT:
+                    return "Print";
+                case I_TYPE.PRINT_REG:
+                    return "Print Register";
+                case I_TYPE.PRINT_CHAR:
+                    return "Print Char";
+                case I_TYPE.SET_REG:
+                    return "Set Register";
+                case I_TYPE.SET_REG_REG:
+                    return "Set Register^2";
+                case I_TYPE.ADD:
+                    return "Add";
+                case I_TYPE.SUB:
+                    return "Subtract";
+                case I_TYPE.MUL:
+                    return "Multiply";
+                case I_TYPE.DIV:
+                    return "Divide";
+                default:
+                    return "Invalid instruction";
+            }
+        }
+
         public enum I_TYPE // Instruction types
         {
             PRINT, // print out an int 

@@ -23,8 +23,8 @@ namespace KernelTestingWPF
     public partial class ConfigurePage : Page
     {
 
-        NavigationContext nav = new NavigationContext();
         int comboNum = 5;
+        string fileName;
         
 
         public ConfigurePage()
@@ -69,11 +69,11 @@ namespace KernelTestingWPF
             rp.NumFastCores = cbFastCores.SelectedIndex + 1;
             rp.NumSlowCores = cbSlowCores.SelectedIndex + 1;
             rp.PolicyType = cbPolicy.SelectedIndex;
-            rp.FileName = nav.fileName;
+            rp.FileName = fileName;
 
             rp.setPage();
 
-            if (nav.fileName != null)
+            if (fileName != null)
             {
                 NavigationService.Navigate(rp);
             }
@@ -87,7 +87,7 @@ namespace KernelTestingWPF
             {
                 txtProgram.Text = openFile.FileName + "\n\n";
                 txtProgram.Text += File.ReadAllText(openFile.FileName);
-                nav.fileName = openFile.FileName;
+                fileName = openFile.FileName;
             }
         }
 
