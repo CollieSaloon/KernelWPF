@@ -37,7 +37,9 @@ namespace KernelTestingWPF
         Thread scheduler;
         List<Instruction> totalQueue;
         public ListView listViewInstructions;
-        
+        public ListView slowListView;
+        public ListView fastListView;
+
         private int policy; // scheduling policy used by this core
         public int Policy
         {
@@ -118,54 +120,24 @@ namespace KernelTestingWPF
 
                             break;
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
+                            FillFastSlowBuffers();
                             break;
                         case (int)P_TYPE.TYPE_BASED:
 
                             break;
-
-
-
-
-                        /*
-                        case (int)P_TYPE.RATIO_BASED:
-                            //for all cores, if it is a fast core and it is not full, allocate this instruction
-                            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
-                            {
-                                if (CoreManager.IsFast(i))//&& !allCores[i].IsFull())
-                                {
-                                    Instruction instruction = totalQueue[0];
-                                    CoreManager.EnqueueAt(i, instruction);
-                                    totalQueue.RemoveAt(0); // dequeue
-
-                                    //listViewInstructions.Items.RemoveAt(1); // malarky
-                                    listViewInstructions.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        listViewInstructions.Items.RemoveAt(1);
-                                    }));
-                                    break;
-                                }
-                            }
-                            break;
-                        case (int)P_TYPE.FAST_SLOW_BUFFER: // TEST ROUND ROBIN
-                            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
-                            {
-                                if (totalQueue.Count <= 0)
-                                    break;
-                                Instruction instruction = totalQueue[0];
-                                CoreManager.EnqueueAt(i, instruction);
-                                totalQueue.RemoveAt(0);
-
-                                listViewInstructions.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    listViewInstructions.Items.RemoveAt(1);
-                                }));
-                            }
-                            break;
-                            // */
                     }
-                    Thread.Sleep(800); // malarky
+                    if(policy != (int)P_TYPE.FAST_SLOW_BUFFER)
+                    {
+                        Thread.Sleep(800);
+                    }
+                     // malarky
                 }
             }
+        }
+
+        private void FillFastSlowBuffers()
+        {
+            //totalQueue[i].
         }
 
         public void ParseForInstructions(string filename)

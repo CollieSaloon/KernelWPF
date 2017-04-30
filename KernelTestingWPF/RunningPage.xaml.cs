@@ -95,8 +95,6 @@ namespace KernelTestingWPF
 
             scheduler.Start();
 
-            //Thread.Sleep(5000);
-
             CoreManager.StartCores();
 
         }
@@ -125,8 +123,6 @@ namespace KernelTestingWPF
                 string[] isolated = fileName.Split('\\');
                 txtTitle.Text += isolated[isolated.Length - 1];
                 InitializeCoresAndScheduler();
-                //
-                //AddListViews();
             }
         }
 
@@ -145,46 +141,6 @@ namespace KernelTestingWPF
             ScrollStackPanel.Children.Clear();
             myScrollView.Content = ScrollStackPanel;
         }
-
-        /*
-        private void AddListViews()
-        {
-            int fastCount = 0;
-            int slowCount = 0;
-            
-
-            for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
-            {
-                ListView newListView = new ListView();
-                newListView.HorizontalContentAlignment = HorizontalAlignment.Center;
-                newListView.Width = 120;
-
-                ListViewItem item = new ListViewItem();
-                item.Content = "testy";
-                
-
-                if (CoreManager.IsFast(i))
-                {
-                   
-                    fastCount++;
-                    //newListView.Items.Add(string.Format("{0} Core #{1}", "Fast", fastCount));//, cores[i].GetId()));
-                    newListView.Items.Add(item);
-                    //newListView.Items[0] += "foo";
-                }
-                else
-                {
-                   
-                    slowCount++;
-                    newListView.Items.Add(string.Format("{0} Core #{1}", "Slow", slowCount));//, cores[i].GetId()));
-                }
-
-                listviews.Add(newListView);
-                ScrollStackPanel.Children.Add(newListView);
-            }
-
-            myScrollView.Content = ScrollStackPanel;
-        }
-        // */
 
         private ListViewItem changeStatusListViewItem()
         {

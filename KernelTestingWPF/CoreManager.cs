@@ -15,6 +15,13 @@ namespace KernelTestingWPF
         private static int totalCoreNum = 0;
         public static int QueueLimit = 1;
         public static int percentFast, percentSlow;
+        public static List<Core> fastCores = new List<Core>();
+        public static List<Core> slowCores = new List<Core>();
+        public static Queue<Instruction> fastInstructions = new Queue<Instruction>();
+        public static Queue<Instruction> slowInstructions = new Queue<Instruction>();
+        private int fastAvaiableCount = 0;
+        private int slowAvailableCount = 0;
+        
 
         public static void ChangeSpeed(float dspeed)
         {
@@ -36,21 +43,13 @@ namespace KernelTestingWPF
             
 
             for (int i = 0; i < numFast; i++,index++) //add fast cores
-            {
-                //ListView listView = new ListView();
-             //   listView.Width = 120;
-                //listView.HorizontalAlignment = HorizontalAlignment.Center;
+            {            
                 cores.Add(new Core(true, txtInfo, i));
-                //sp.Children.Add(listView);
             }
 
             for (int i = 0; i < numSlow; i++,index++) // add slow cores
             {
-         //       ListView listView = new ListView();
-         ////       listView.Width = 120;
-         //       listView.HorizontalAlignment = HorizontalAlignment.Center;
                 cores.Add(new Core(false, txtInfo, i));
-                //sp.Children.Add(listView);
             }
 
                    
@@ -72,8 +71,6 @@ namespace KernelTestingWPF
         public static int GetMinOfType(Instruction.I_TYPE type, bool restrict = false, bool fast = false)
         {
             int index = -1;
-
-            
 
             return index;
         }
@@ -138,6 +135,10 @@ namespace KernelTestingWPF
 
             return index;
         }
+
+        public static void FastSlowBrother()
+        { 
+}
 
         // used for that stuff
         /*

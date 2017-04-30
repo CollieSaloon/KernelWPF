@@ -88,6 +88,20 @@ namespace KernelTestingWPF
 
         private void GoToRunningButton_Click(object sender, RoutedEventArgs e)
         {
+            if (cbPolicy.SelectedIndex == 1)
+            {
+                GoToFastSlowPage();
+            }
+            else
+            {
+                GoToRunningPage();
+            }
+
+
+        }
+
+        private void GoToRunningPage()
+        {
             RunningPage rp = new RunningPage();
 
             rp.NumFastCores = cbFastCores.SelectedIndex;
@@ -128,6 +142,23 @@ namespace KernelTestingWPF
             if (fileName != null)
             {
                 NavigationService.Navigate(rp);
+            }
+        }
+
+        private void GoToFastSlowPage()
+        {
+            FastSlowPage fs = new FastSlowPage();
+
+            fs.NumFastCores = cbFastCores.SelectedIndex;
+            fs.NumSlowCores = cbSlowCores.SelectedIndex;
+            fs.PolicyType = cbPolicy.SelectedIndex;
+            fs.FileName = fileName;
+
+            fs.setPage();
+
+            if (fileName != null)
+            {
+                NavigationService.Navigate(fs);
             }
         }
 

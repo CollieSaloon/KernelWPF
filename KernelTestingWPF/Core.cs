@@ -15,7 +15,6 @@ namespace KernelTestingWPF
     {
         TextBlock tb;//
         public ListView listView; // staying null or something
-        public const int QUEUE_SIZE = 100;
         public const bool DEBUG = false;
         public const bool SLP_DEBUG = false;
         private List<Instruction> processorQueue; // queue of instructions to execute
@@ -58,7 +57,7 @@ namespace KernelTestingWPF
 
         public bool IsFull() // we're not using this except for that one policy that cares abot queue size
         {
-            return processorQueue.Count >= QUEUE_SIZE;
+            return processorQueue.Count >= CoreManager.QueueLimit;
         }
         public bool IsEmpty()
         {
