@@ -22,6 +22,8 @@ namespace KernelTestingWPF
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
+        private bool isWhite = false;
+        private bool isPopped = false;
 
         private int totalTime = 0; // for report
 
@@ -63,12 +65,34 @@ namespace KernelTestingWPF
             return processorQueue.Count == 0;
         }
 
-        private void AddListViewItem(ListViewItem item)
+        private void AddListViewItem(string s)
         {
-           Application.Current.Dispatcher.Invoke(new Action(() =>
-           {
-               listView.Items.Add(item);
-           }));
+            ListViewItem item = new ListViewItem();
+
+            item.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            if(isFast)
+            {
+                if (!isWhite)
+                {
+                    item.Background = new SolidColorBrush(Colors.IndianRed);
+                    item.Foreground = new SolidColorBrush(Colors.White);
+                }
+            }
+            else
+            {
+                if (!isWhite)
+                {
+                    item.Background = new SolidColorBrush(Colors.AliceBlue);
+                }
+            }
+
+            isWhite = !isWhite;
+
+            item.Content = s;
+
+            listView.Items.Add(item);
+           
         }
 
         public bool Enqueue(Instruction instruction) // used by scheduler when finished // CHANGE THIS
@@ -96,13 +120,14 @@ namespace KernelTestingWPF
                 item = "malarky";
             }
 
-            Application.Current.Dispatcher.BeginInvoke((Action)(() => { listView.Items.Add(item); }));
+            Application.Current.Dispatcher.BeginInvoke((Action)(() => { AddListViewItem(item); }));
 
             return true;
         }
 
         private Instruction Dequeue() // used internally
         {
+            //isWhite = !isWhite;
             Instruction result = null;
             if (processorQueue.Count >= 1)
             {
