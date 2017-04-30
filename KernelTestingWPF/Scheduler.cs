@@ -84,7 +84,7 @@ namespace KernelTestingWPF
                             //for all cores, if it is a fast core and it is not full, allocate this instruction
                             for (int i = 0; i < allCores.Count; i++)
                             {
-                                if (allCores[i].GetIsFast() && !allCores[i].IsFull())
+                                if (allCores[i].GetIsFast())//&& !allCores[i].IsFull())
                                 {
                                     Instruction instruction = totalQueue[0];
 
