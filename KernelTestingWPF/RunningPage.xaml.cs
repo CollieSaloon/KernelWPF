@@ -33,8 +33,8 @@ namespace KernelTestingWPF
         int testMerge;
         int testMerge2;
 
-        public bool inputIsFast, outputIsFast, computationIsFast, registerIsFast;//
-        public float percentFast, percentSlow;//
+        public bool inputIsFast, outputIsFast, computationIsFast, registerIsFast;
+        public float percentFast, percentSlow;
 
         public string FileName
         {
