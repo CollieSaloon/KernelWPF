@@ -16,6 +16,8 @@ namespace KernelTestingWPF
         public static int QueueLimit = 1;
         public static int percentFast, percentSlow;
 
+        public static int numFast, numSlow;
+
         public static void ChangeSpeed(float dspeed)
         {
             SpeedMultiplier += dspeed;
@@ -34,26 +36,15 @@ namespace KernelTestingWPF
 
             int index = 0;
             
-
             for (int i = 0; i < numFast; i++,index++) //add fast cores
             {
-                //ListView listView = new ListView();
-             //   listView.Width = 120;
-                //listView.HorizontalAlignment = HorizontalAlignment.Center;
                 cores.Add(new Core(true, txtInfo, i));
-                //sp.Children.Add(listView);
             }
 
             for (int i = 0; i < numSlow; i++,index++) // add slow cores
             {
-         //       ListView listView = new ListView();
-         ////       listView.Width = 120;
-         //       listView.HorizontalAlignment = HorizontalAlignment.Center;
                 cores.Add(new Core(false, txtInfo, i));
-                //sp.Children.Add(listView);
             }
-
-                   
         }
 
         public static void StartCores()
@@ -89,7 +80,6 @@ namespace KernelTestingWPF
 
             float percentCores = 0;
             float percentSystem= percentFast / (percentFast + percentSlow);
-            //float percentSystemSlow = percentSlow / (percentFast + percentSlow);
             float percentSum = 0;
 
             int minFast, minSlow, minFastIndex, minSlowIndex;
@@ -139,55 +129,21 @@ namespace KernelTestingWPF
             return index;
         }
 
-        // used for that stuff
-        /*
-        public static List<float> GetCorePercentages(bool restrict=false, bool fast=false)
-        {
-            List<float> result = new List<float>();
-
-            if (restrict)
-            {
-                int total = 0;
-                for (int i = 0, j = 0; i < cores.Count; i++) // first count
-                {
-                    if (cores[i].GetIsFast() != fast)
-                        continue;
-
-                    result.Add(new float());
-                    result[j] = cores[i].GetQueueAmount();
-                    total += (int)result[j];
-                    j++;
-                }
-                for (int i = 0; i < result.Count; i++) // then get proportions
-                {
-                    result[i] /= total;
-                }
-            }
-            else
-            {
-                int total = 0;
-                for (int i = 0; i < cores.Count; i++) // first count
-                {
-                    result.Add(new float());
-                    result[i] = cores[i].GetQueueAmount();
-                    total += (int)result[i];
-                }
-                for (int i = 0; i < cores.Count; i++) // then get proportions
-                {
-                    result[i] /= total;
-                }
-            }
-
-            return result;
-        }
-        // */
-
         public static void StopCores()
         {
             foreach (Core c in cores)
             {
                 c.Stop();
             }
+        }
+
+        public static int GetNumProcs(int index)
+        {
+            return cores[index].numberProcessesRun;
+        }
+        public static int GetExecTime(int index)
+        {
+            return cores[index].totalTime;
         }
 
         public static void EnqueueAt(int index, Instruction instruction)

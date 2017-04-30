@@ -22,8 +22,9 @@ namespace KernelTestingWPF
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
+        public int numberProcessesRun = 0;
 
-        private int totalTime = 0; // for report
+        public int totalTime = 0; // for report
 
         public int GetQueueAmount()
         {
@@ -172,6 +173,7 @@ namespace KernelTestingWPF
                 ;
             }
             totalTime += time;
+            numberProcessesRun++;
 
             Console.WriteLine("Total time: " + totalTime);
 
