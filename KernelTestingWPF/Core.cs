@@ -22,6 +22,7 @@ namespace KernelTestingWPF
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
         int id = -1; // malarky
+        public int GetId() { return id; }
 
         public Core(bool isFast, TextBlock tb, List<ListView> lv)
         {

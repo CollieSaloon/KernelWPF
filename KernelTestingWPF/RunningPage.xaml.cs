@@ -25,8 +25,6 @@ namespace KernelTestingWPF
         List<bool> killCores = new List<bool>(); // VERY MUCH malarky
 
         List<ListView> listviews = new List<ListView>();
-        int fastCount = 1;
-        int slowCount = 1;
 
         string fileName;
         int numFastCores;
@@ -137,27 +135,26 @@ namespace KernelTestingWPF
 
         private void AddListView()
         {
-            string type = "";
-            int num = -1;
+            int fastCount = 0;
+            int slowCount = 0;
+
             for (int i = 0; i < cores.Count; i++)
             {
+                ListView newListView = new ListView();
+                newListView.HorizontalContentAlignment = HorizontalAlignment.Center;
+                newListView.Width = 120;
+
                 if (cores[i].GetIsFast())
                 {
-                    type = "Fast";
-                    num = i + 1;
                     fastCount++;
+                    newListView.Items.Add(string.Format("{0} Core #{1}", "Fast", fastCount));//, cores[i].GetId()));
                 }
                 else
                 {
-                    type = "Slow";
-                    num = i - numFastCores + 1;
                     slowCount++;
+                    newListView.Items.Add(string.Format("{0} Core #{1}", "Slow", slowCount));//, cores[i].GetId()));
                 }
 
-                ListView newListView = new ListView();
-                newListView.HorizontalContentAlignment = HorizontalAlignment.Center;
-                newListView.Width = 150;
-                newListView.Items.Add(string.Format("Core {0} #{1}", type, num));
                 listviews.Add(newListView);
                 ScrollStackPanel.Children.Add(newListView);
             }
