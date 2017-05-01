@@ -21,10 +21,14 @@ namespace KernelTestingWPF
         private int[] registers; // registers for use by the processor
         private bool isFast; // determines whether this is a fast or slow core
         private Thread process; // the actual process
+
         private bool isWhite = false;
         private bool isPopped = false;
+        public int numberProcessesRun = 0;
+        public int totalPower = 0;
 
-        private int totalTime = 0; // for report
+
+        public int totalTime = 0; // for report
 
         public int GetQueueAmount()
         {
@@ -196,8 +200,10 @@ namespace KernelTestingWPF
                 ;
             }
             totalTime += time;
+            numberProcessesRun++;
+            totalPower += (isFast ? Instruction.I_POW_F[(int)instruction.type] : Instruction.I_POW_S[(int)instruction.type]) * 100;
 
-            Console.WriteLine("Total time: " + totalTime);
+            //Console.WriteLine("Total time: " + totalTime);
 
             switch (instruction.type)
             {
@@ -259,18 +265,14 @@ namespace KernelTestingWPF
         {
             if (!asChar)
             {
-                Console.WriteLine(output);
-                
                 new Thread(() => {
                          tb.Dispatcher.BeginInvoke((Action)(() =>
-
                              tb.Text = ">>" + output + "\n     " + (tb.Text.Length > 2 ? tb.Text.Substring(2) : tb.Text)
                              ));
                      }).Start();
             }
             else
             {
-                Console.WriteLine(((char)output).ToString());
                 new Thread(() => {
                     tb.Dispatcher.BeginInvoke((Action)(() =>
                         tb.Text = ">>" + ((char)output).ToString() + "\n     " + (tb.Text.Length > 2 ? tb.Text.Substring(2) : tb.Text)));

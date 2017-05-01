@@ -23,6 +23,11 @@ namespace KernelTestingWPF
         private int slowAvailableCount = 0;
         
 
+        public static bool[] typesAreFast = { true, true, true, true }; // input, output, computational, registers
+        public static List<bool> typesAreFastFull = new List<bool>();
+
+        public static int numFast, numSlow;
+
         public static void ChangeSpeed(float dspeed)
         {
             SpeedMultiplier += dspeed;
@@ -41,9 +46,12 @@ namespace KernelTestingWPF
 
             int index = 0;
             
-
             for (int i = 0; i < numFast; i++,index++) //add fast cores
+
             {            
+
+            
+
                 cores.Add(new Core(true, txtInfo, i));
             }
 
@@ -51,8 +59,32 @@ namespace KernelTestingWPF
             {
                 cores.Add(new Core(false, txtInfo, i));
             }
+            /*
+            PRINT, // print out an int 
+            PRINT_REG, // print out an int from a reg
+            PRINT_CHAR, // print out a char (passed in as int)
+            SET_REG, // takes in a register and a value
+            SET_REG_REG, // takes in two registers
+            ADD, // takes in three registers
+            SUB, // takes in three registers
+            MUL, // takes in three registers
+            DIV, // takes in three registers
+            NUM_TYPES // placeholder for size, also if an instruction is set to this, invalid
+            // */
+            // 0 - input // NOT USED
+            // 1 - output
+            // 2 - computation
+            // 3 - registers
+            typesAreFastFull.Add(typesAreFast[1]);
+            typesAreFastFull.Add(typesAreFast[1]);
+            typesAreFastFull.Add(typesAreFast[1]);
+            typesAreFastFull.Add(typesAreFast[3]);
+            typesAreFastFull.Add(typesAreFast[3]);
 
-                   
+            typesAreFastFull.Add(typesAreFast[2]);
+            typesAreFastFull.Add(typesAreFast[2]);
+            typesAreFastFull.Add(typesAreFast[2]);
+            typesAreFastFull.Add(typesAreFast[2]);
         }
 
         public static void StartCores()
@@ -64,13 +96,35 @@ namespace KernelTestingWPF
             }
         }
 
+        public static int GetPowerConsumption(int index)
+        {
+            return cores[index].totalPower;
+        }
+
         public static int GetQueueAmount(int index)
         {
             return cores[index].GetQueueAmount();
         }
-        public static int GetMinOfType(Instruction.I_TYPE type, bool restrict = false, bool fast = false)
+        public static int GetMinOfType(Instruction.I_TYPE type)
         {
             int index = -1;
+            int min = 100000;
+
+		for(int i = 0; i < cores.Count; i++)
+            {
+                int current = cores[i].GetQueueAmount();
+
+                if (cores[i].GetIsFast() && !typesAreFastFull[(int)type])
+                    current = 100000; // if it can't be done by preferred core type (fast/slow), cheese it
+                else if (!cores[i].GetIsFast() && typesAreFastFull[(int)type])
+                    current = 100000;
+                
+                if (current < min)
+                {
+                    min = current;
+                    index = i;
+                }
+            }
 
             return index;
         }
@@ -78,110 +132,55 @@ namespace KernelTestingWPF
         public static int GetMinPercentageIndex()
         {
             int index = -1;
-            List<float> queueRatio = new List<float>();
-            List<int> queueSum = new List<int>();
 
-            float percentShownFast = 0;
-            float percentShownSlow = 0;
+            float desiredPercentFast = percentFast / 100;
+            float desiredPercentSlow = percentSlow / 100;
 
-            float percentCores = 0;
-            float percentSystem= percentFast / (percentFast + percentSlow);
-            //float percentSystemSlow = percentSlow / (percentFast + percentSlow);
-            float percentSum = 0;
+            // Optimization: if all queues are empty, just throw it in a fast or slow based on desired
 
-            int minFast, minSlow, minFastIndex, minSlowIndex;
-            minFast = minSlow = 100000;
-            minFastIndex = minSlowIndex = -1;
-            for (int i = 0; i < cores.Count; i++)
+            bool allEmpty = false;
+            foreach (Core c in cores)
             {
-                queueSum.Add(cores[i].GetQueueAmount()); // get queue count
-            }
-            for (int i = 0; i < cores.Count; i++)
-            {
-                queueRatio.Add(queueSum[i] / (queueSum.Count >= 1 ? queueSum.Count : 1)); // convert it to percentage
-                percentSum += queueRatio[i]; // sum percentages
-            }
-            for (int i = 0; i < cores.Count && queueRatio.Count >= 1; i++)
-            {
-                if (cores[i].GetIsFast())
+                if (c.GetQueueAmount() > 0)
                 {
-                    if (queueSum[i] <= minFast)
+                    allEmpty = true;
+                    break;
+                }
+            }
+
+            if (allEmpty)
+            {
+                if (desiredPercentFast > desiredPercentSlow)
+                {
+                    for(int i = 0; i < cores.Count; i++)
                     {
-                        minFast = queueSum[i];
-                        minFastIndex = i;
+                        if (cores[i].GetIsFast())
+                            return i;
                     }
-                    percentShownFast += queueRatio[i]; // add the ratio to totalDesired
                 }
                 else
                 {
-                    if (queueSum[i] <= minSlow)
+                    for (int i = 0; i < cores.Count; i++)
                     {
-                        minSlow = queueSum[i];
-                        minSlowIndex = i;
+                        if (!cores[i].GetIsFast())
+                            return i;
                     }
-                    percentShownSlow += queueRatio[i]; // add the ratio to totalDesired
                 }
             }
-            float percentShown = (percentShownFast + percentShownSlow >= 0) ? (percentShownFast / (percentShownFast + percentShownSlow)) : 0;
 
-            if (percentShown <= percentSystem)
-            {
-                index = minFastIndex;
-            }
-            else
-            {
-                index = minSlowIndex;
-            }
+
 
             return index;
         }
 
         public static void FastSlowBrother()
         { 
-}
+		
+		}
 
-        // used for that stuff
-        /*
-        public static List<float> GetCorePercentages(bool restrict=false, bool fast=false)
-        {
-            List<float> result = new List<float>();
-
-            if (restrict)
-            {
-                int total = 0;
-                for (int i = 0, j = 0; i < cores.Count; i++) // first count
-                {
-                    if (cores[i].GetIsFast() != fast)
-                        continue;
-
-                    result.Add(new float());
-                    result[j] = cores[i].GetQueueAmount();
-                    total += (int)result[j];
-                    j++;
-                }
-                for (int i = 0; i < result.Count; i++) // then get proportions
-                {
-                    result[i] /= total;
-                }
-            }
-            else
-            {
-                int total = 0;
-                for (int i = 0; i < cores.Count; i++) // first count
-                {
-                    result.Add(new float());
-                    result[i] = cores[i].GetQueueAmount();
-                    total += (int)result[i];
-                }
-                for (int i = 0; i < cores.Count; i++) // then get proportions
-                {
-                    result[i] /= total;
-                }
-            }
-
-            return result;
-        }
-        // */
+      
+          
+        
 
         public static void StopCores()
         {
@@ -189,6 +188,15 @@ namespace KernelTestingWPF
             {
                 c.Stop();
             }
+        }
+
+        public static int GetNumProcs(int index)
+        {
+            return cores[index].numberProcessesRun;
+        }
+        public static int GetExecTime(int index)
+        {
+            return cores[index].totalTime;
         }
 
         public static void EnqueueAt(int index, Instruction instruction)

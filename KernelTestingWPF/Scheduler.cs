@@ -85,45 +85,53 @@ namespace KernelTestingWPF
                 while (totalQueue.Count > 0)
                 {
                     Instruction instruction = null;
+                    int index = -1;
 
                     switch (policy)
                     {
-                        case (int)P_TYPE.LIMITED_QUEUE:
+                        case (int)P_TYPE.LIMITED_QUEUE: // done
                             for(int i = 0; i < CoreManager.TotalCoreNum(); i++)
                             {
                                 if (totalQueue.Count <= 0)
                                     break;
                                 if (CoreManager.GetQueueAmount(i) >= CoreManager.QueueLimit)
                                     continue;
-
                                 instruction = totalQueue[0];
                                 CoreManager.EnqueueAt(i, instruction);
                                 totalQueue.RemoveAt(0);
-
                                 listViewInstructions.Dispatcher.Invoke(new Action(() =>
                                 {
                                     listViewInstructions.Items.RemoveAt(1);
                                 }));
                             }
                             break;
-                        case (int)P_TYPE.RATIO_BASED:
-                            int index = CoreManager.GetMinPercentageIndex();
-
+                        case (int)P_TYPE.RATIO_BASED: // close
+                            index = CoreManager.GetMinPercentageIndex(); // !FIX
                             instruction = totalQueue[0];
                             CoreManager.EnqueueAt(index, instruction);
                             totalQueue.RemoveAt(0);
-
                             listViewInstructions.Dispatcher.Invoke(new Action(() =>
                             {
                                 listViewInstructions.Items.RemoveAt(1);
                             }));
-
                             break;
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
                             FillFastSlowBuffers();
                             break;
                         case (int)P_TYPE.TYPE_BASED:
 
+
+                            // Vaughan >= ghey
+                            break;
+                        case (int)P_TYPE.TYPE_BASED: // done
+                            instruction = totalQueue[0];
+                            index = CoreManager.GetMinOfType(instruction.type);
+                            CoreManager.EnqueueAt(index, instruction);
+                            totalQueue.RemoveAt(0);
+                            listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                            {
+                                listViewInstructions.Items.RemoveAt(1);
+                            }));
                             break;
                     }
                     if(policy != (int)P_TYPE.FAST_SLOW_BUFFER)
