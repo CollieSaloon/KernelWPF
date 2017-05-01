@@ -19,7 +19,6 @@ C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.pdb
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\bin\Debug\KernelTestingWPF.exe
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\bin\Debug\KernelTestingWPF.pdb
-C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF.csprojResolveAssemblyReference.cache
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\MainWindow.g.cs
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\App.g.cs
 C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\KernelTestingWPF_MarkupCompile.cache

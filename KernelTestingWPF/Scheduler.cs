@@ -145,22 +145,53 @@ namespace KernelTestingWPF
                 if (CoreManager.DoFastInstruction())
                 {
                     QueueFastInstruction();
-                    fastListView.Dispatcher.Invoke(new Action(() =>
-                    {
-                        fastListView.Items.RemoveAt(0);
-                    }));
+                    
                 }
-                else
+                else if(CoreManager.slowInstructions.Count > 0)
                 {
                     QueueSlowInstruction();
-                    slowListView.Dispatcher.Invoke(new Action(() =>
-                    {
-                        slowListView.Items.RemoveAt(0);
-                    }));
+                    
+                }
+                else if(CoreManager.slowInstructions.Count == 0)
+                {
+                    QueueFastInstruction();
                 }
 
                 Thread.Sleep(800);
             }
+        }
+
+        private void RemoveSlowListViewItem()
+        {
+            slowListView.Dispatcher.Invoke(new Action(() =>
+            {
+                try
+                {
+                    slowListView.Items.RemoveAt(0);
+                }
+                catch (Exception)
+                {
+
+
+                }
+
+            }));
+        }
+
+        private void RemoveFastListViewItem()
+        {
+            fastListView.Dispatcher.Invoke(new Action(() =>
+            {
+                try
+                {
+                    fastListView.Items.RemoveAt(0);
+                }
+                catch (Exception)
+                {
+
+
+                }
+            }));
         }
 
         private void QueueFastInstruction()
@@ -169,11 +200,29 @@ namespace KernelTestingWPF
 
             if(check != -1)
             {
-                CoreManager.EnqueueAt(check, CoreManager.fastInstructions.Dequeue());
+                //try
+              //  {
+                    CoreManager.EnqueueAt(check, CoreManager.fastInstructions.Dequeue());
+
+                //}
+                //catch (Exception)
+                //{
+
+                   
+                //}
+                RemoveFastListViewItem();
             }
             else if(CoreManager.checkSlowCoresAvailability() != -1)
             {
-                CoreManager.EnqueueAt(CoreManager.checkSlowCoresAvailability(), CoreManager.fastInstructions.Dequeue());
+                //try
+                //{
+                    CoreManager.EnqueueAt(CoreManager.checkSlowCoresAvailability(), CoreManager.fastInstructions.Dequeue());
+                //}
+                //catch (Exception)
+                //{
+
+                //}
+                RemoveFastListViewItem();
             }
 
 
@@ -186,10 +235,12 @@ namespace KernelTestingWPF
             if (check != -1)
             {
                 CoreManager.EnqueueAt(check, CoreManager.slowInstructions.Dequeue());
+                RemoveSlowListViewItem();
             }
             else if (CoreManager.checkFastCoresAvailability() != -1)
             {
                 CoreManager.EnqueueAt(CoreManager.checkFastCoresAvailability(), CoreManager.slowInstructions.Dequeue());
+                RemoveSlowListViewItem();
             }
         }
 
@@ -197,7 +248,7 @@ namespace KernelTestingWPF
         {
             while(totalQueue.Count > 0)
             {
-                Thread.Sleep(500);
+                Thread.Sleep(300);
                 Instruction instruction = totalQueue[0];
                 if(CoreManager.typesAreFastFull[(int)instruction.type])
                 {
@@ -222,7 +273,10 @@ namespace KernelTestingWPF
                 }));
 
                 totalQueue.RemoveAt(0);
+
+                
             }
+
         }
 
         private void AddSlowListViewItem(string s)

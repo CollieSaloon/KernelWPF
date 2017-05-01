@@ -196,11 +196,11 @@ namespace KernelTestingWPF
                 doFast = true;
             }
 
-		    if(fastTimeStamp > slowTimeStamp)
+		    if(fastTimeStamp < slowTimeStamp)
             {
                 doFast = true;
             }
-            else if(slowTimeStamp > fastTimeStamp)
+            else if(slowTimeStamp < fastTimeStamp)
             {
                 doFast = false;
             }
@@ -256,9 +256,9 @@ namespace KernelTestingWPF
 
             for (int i = 0; i < slowCores.Count; i++)
             {
-                if(slowCores[i].IsEmpty())
+                if(slowCores[i].listView.Items.Count == 1)//slowCores[i].IsEmpty()
                 {
-                    index = i;
+                    index = i + fastCores.Count;
                     break;
                 }
             }
@@ -271,7 +271,7 @@ namespace KernelTestingWPF
 
             for (int i = 0; i < fastCores.Count; i++)
             {
-                if (fastCores[i].IsEmpty())
+                if (fastCores[i].listView.Items.Count == 1)//fastCores[i].IsEmpty()
                 {
                     index = i;
                     break;

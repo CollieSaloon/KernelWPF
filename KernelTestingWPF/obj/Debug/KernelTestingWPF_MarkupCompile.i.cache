@@ -4,15 +4,15 @@
 exe
 C#
 .cs
-C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\obj\Debug\
+C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\obj\Debug\
 KernelTestingWPF
 none
 false
 DEBUG;TRACE
-C:\Users\John\Documents\GitHub\KernelWPF\KernelTestingWPF\App.xaml
+C:\Users\vaughanv21\GithubProjects\KernelWPFRepo\KernelWPF\KernelTestingWPF\App.xaml
 5192139369
 
-18864992314
+18-1695143139
 13738642453
 ConfigurePage.xaml;FastSlowPage.xaml;MainWindow.xaml;ReportPage.xaml;RunningPage.xaml;
 

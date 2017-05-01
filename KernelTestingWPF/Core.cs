@@ -189,7 +189,7 @@ namespace KernelTestingWPF
                 (int)((Instruction.I_OP_TIME_F[(int)instruction.type] * 1000) +
                     r.Next(Instruction.RAND_LO[(int)instruction.type], Instruction.RAND_HI[(int)instruction.type]) * CoreManager.SpeedMultiplier) :
                 (int)((Instruction.I_OP_TIME_S[(int)instruction.type] * 1000) +
-                    r.Next(Instruction.RAND_LO[(int)instruction.type], Instruction.RAND_HI[(int)instruction.type]) * 1000 * CoreManager.SpeedMultiplier);
+                    r.Next(Instruction.RAND_LO[(int)instruction.type], Instruction.RAND_HI[(int)instruction.type]) * CoreManager.SpeedMultiplier);
 
             try
             {
