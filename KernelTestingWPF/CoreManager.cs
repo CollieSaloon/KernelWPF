@@ -23,7 +23,7 @@ namespace KernelTestingWPF
         private int slowAvailableCount = 0;
         
 
-        public static bool[] typesAreFast = { true, true, true, true }; // input, output, computational, registers
+        public static bool[] typesAreFast = { false, false, true, false }; // input, output, computational, registers
         public static List<bool> typesAreFastFull = new List<bool>();
 
         public static int numFast, numSlow;
@@ -49,9 +49,6 @@ namespace KernelTestingWPF
             for (int i = 0; i < numFast; i++,index++) //add fast cores
 
             {            
-
-            
-
                 cores.Add(new Core(true, txtInfo, i));
             }
 
@@ -173,9 +170,42 @@ namespace KernelTestingWPF
             return index;
         }
 
-        public static void FastSlowBrother()
-        { 
-		
+        //fill cores
+        public static bool DoFastInstruction()
+        {
+            bool doFast = false;
+
+            int fastTimeStamp = -1;
+            int slowTimeStamp = -1;
+            
+            if(fastInstructions.Count > 0)
+            {
+                fastTimeStamp = fastInstructions.Peek().timeStamp;
+            }
+            else
+            {
+                doFast = false;
+            }
+
+            if(slowInstructions.Count > 0)
+            {
+                slowTimeStamp = slowInstructions.Peek().timeStamp;
+            }
+            else
+            {
+                doFast = true;
+            }
+
+		    if(fastTimeStamp > slowTimeStamp)
+            {
+                doFast = true;
+            }
+            else if(slowTimeStamp > fastTimeStamp)
+            {
+                doFast = false;
+            }
+
+            return doFast;
 		}
 
       
@@ -202,6 +232,52 @@ namespace KernelTestingWPF
         public static void EnqueueAt(int index, Instruction instruction)
         { 
             cores[index].Enqueue(instruction);
+        }
+
+        //public static bool SlowEnqueue(Instruction instruction)
+        //{
+        //    bool canSlowQueue = false;
+
+        //    if (checkSlowCoresAvailability() != -1)
+        //    {
+        //        canSlowQueue = true;
+        //    }
+        //}
+
+        //public static bool FastEnqueue(Instruction instruction)
+        //{
+        //    bool canFastQueue = false;
+        //    checkFastCoresAvailability();
+        //}
+
+        public static int checkSlowCoresAvailability()
+        {
+            int index = -1;
+
+            for (int i = 0; i < slowCores.Count; i++)
+            {
+                if(slowCores[i].IsEmpty())
+                {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+
+        public static int checkFastCoresAvailability()
+        {
+            int index = -1;
+
+            for (int i = 0; i < fastCores.Count; i++)
+            {
+                if (fastCores[i].IsEmpty())
+                {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
         }
 
         public static int TotalCoreNum()

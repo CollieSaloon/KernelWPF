@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using System.Windows.Controls;
+using System.Windows;
+using System.Windows.Media;
 
 namespace KernelTestingWPF
 {
@@ -28,10 +30,6 @@ namespace KernelTestingWPF
         };
 
         //bool alive = true; // VERY MUCH malarky
-        
-
-        
-
 
         string filename;
         Thread scheduler;
@@ -117,11 +115,8 @@ namespace KernelTestingWPF
                             break;
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
                             FillFastSlowBuffers();
-                            break;
-                        case (int)P_TYPE.TYPE_BASED:
 
-
-                            // Vaughan >= ghey
+                            FastSlowBrother();
                             break;
                         case (int)P_TYPE.TYPE_BASED: // done
                             instruction = totalQueue[0];
@@ -143,9 +138,126 @@ namespace KernelTestingWPF
             }
         }
 
+        private void FastSlowBrother()
+        {
+            while (CoreManager.fastInstructions.Count > 0 || CoreManager.slowInstructions.Count > 0)
+            {
+                if (CoreManager.DoFastInstruction())
+                {
+                    QueueFastInstruction();
+                    fastListView.Dispatcher.Invoke(new Action(() =>
+                    {
+                        fastListView.Items.RemoveAt(0);
+                    }));
+                }
+                else
+                {
+                    QueueSlowInstruction();
+                    slowListView.Dispatcher.Invoke(new Action(() =>
+                    {
+                        slowListView.Items.RemoveAt(0);
+                    }));
+                }
+
+                Thread.Sleep(800);
+            }
+        }
+
+        private void QueueFastInstruction()
+        {
+            int check = CoreManager.checkFastCoresAvailability();
+
+            if(check != -1)
+            {
+                CoreManager.EnqueueAt(check, CoreManager.fastInstructions.Dequeue());
+            }
+            else if(CoreManager.checkSlowCoresAvailability() != -1)
+            {
+                CoreManager.EnqueueAt(CoreManager.checkSlowCoresAvailability(), CoreManager.fastInstructions.Dequeue());
+            }
+
+
+        }
+
+        private void QueueSlowInstruction()
+        {
+            int check = CoreManager.checkSlowCoresAvailability();
+
+            if (check != -1)
+            {
+                CoreManager.EnqueueAt(check, CoreManager.slowInstructions.Dequeue());
+            }
+            else if (CoreManager.checkFastCoresAvailability() != -1)
+            {
+                CoreManager.EnqueueAt(CoreManager.checkFastCoresAvailability(), CoreManager.slowInstructions.Dequeue());
+            }
+        }
+
         private void FillFastSlowBuffers()
         {
-            //totalQueue[i].
+            while(totalQueue.Count > 0)
+            {
+                Thread.Sleep(500);
+                Instruction instruction = totalQueue[0];
+                if(CoreManager.typesAreFastFull[(int)instruction.type])
+                {
+                    CoreManager.fastInstructions.Enqueue(instruction);
+                    fastListView.Dispatcher.Invoke(new Action(() =>
+                    {
+                        AddFastListViewItem(instruction.instruction);
+                    }));
+                }
+                else
+                {
+                    CoreManager.slowInstructions.Enqueue(instruction);
+                     slowListView.Dispatcher.Invoke(new Action(() =>
+                    {
+                        AddSlowListViewItem(instruction.instruction);
+                    }));
+                }
+
+                listViewInstructions.Dispatcher.Invoke(new Action(() =>
+                {
+                    listViewInstructions.Items.RemoveAt(1);
+                }));
+
+                totalQueue.RemoveAt(0);
+            }
+        }
+
+        private void AddSlowListViewItem(string s)
+        {
+            ListViewItem item = new ListViewItem();
+
+            item.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            if (slowListView.Items.Count % 2 == 1)
+            {
+                item.Background = new SolidColorBrush(Colors.AliceBlue);
+            }
+
+            item.Content = s;
+
+            slowListView.Items.Add(item);
+
+        }
+
+        private void AddFastListViewItem(string s)
+        {
+            ListViewItem item = new ListViewItem();
+
+            item.HorizontalAlignment = HorizontalAlignment.Stretch;
+           
+                if (fastListView.Items.Count % 2 == 1)
+                {
+                    item.Background = new SolidColorBrush(Colors.IndianRed);
+                    item.Foreground = new SolidColorBrush(Colors.White);
+                }         
+
+            item.Content = s;
+
+            fastListView.Items.Add(item);
+
         }
 
         public void ParseForInstructions(string filename)
