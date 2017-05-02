@@ -98,6 +98,28 @@ namespace KernelTestingWPF
            
         }
 
+        private void AddListViewItemFastSlow(Instruction instruction,string s)
+        {
+            ListViewItem item = new ListViewItem();
+
+            item.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            if (CoreManager.typesAreFastFull[(int)instruction.type])
+            {
+                item.Background = new SolidColorBrush(Colors.IndianRed);
+                item.Foreground = new SolidColorBrush(Colors.White);
+            }
+            else
+            {
+                item.Background = new SolidColorBrush(Colors.AliceBlue);
+            }
+
+            item.Content = s;
+
+            listView.Items.Add(item);
+
+        }
+
         public bool Enqueue(Instruction instruction) // used by scheduler when finished // CHANGE THIS
         {
             processorQueue.Add(instruction);
@@ -124,6 +146,36 @@ namespace KernelTestingWPF
             }
 
             Application.Current.Dispatcher.BeginInvoke((Action)(() => { AddListViewItem(item); }));
+
+            return true;
+        }
+
+        public bool EnqueueFastSlow(Instruction instruction)
+        {
+            processorQueue.Add(instruction);
+
+            string item;
+
+
+
+            if (instruction.type >= 0 && instruction.type < Instruction.I_TYPE.SET_REG)
+            {
+                item = string.Format("{0}: {1}", Instruction.GetTypeString(instruction.type), instruction.arg1);
+            }
+            else if (instruction.type < Instruction.I_TYPE.ADD)
+            {
+                item = string.Format("{0}: {1}, {2}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2);
+            }
+            else if (instruction.type <= Instruction.I_TYPE.DIV)
+            {
+                item = string.Format("{0}: {1}, {2}, {3}", Instruction.GetTypeString(instruction.type), instruction.arg1, instruction.arg2, instruction.arg3);
+            }
+            else
+            {
+                item = "malarky";
+            }
+
+            Application.Current.Dispatcher.BeginInvoke((Action)(() => { AddListViewItemFastSlow(instruction,item); }));
 
             return true;
         }

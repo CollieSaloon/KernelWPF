@@ -115,7 +115,6 @@ namespace KernelTestingWPF
                             break;
                         case (int)P_TYPE.FAST_SLOW_BUFFER:
                             FillFastSlowBuffers();
-
                             FastSlowBrother();
                             break;
                         case (int)P_TYPE.TYPE_BASED: // done
@@ -142,7 +141,7 @@ namespace KernelTestingWPF
         {
             while (CoreManager.fastInstructions.Count > 0 || CoreManager.slowInstructions.Count > 0)
             {
-                if (CoreManager.DoFastInstruction())
+                if (CoreManager.DoFastInstruction() && CoreManager.fastInstructions.Count != 0)
                 {
                     QueueFastInstruction();
                     
@@ -157,7 +156,7 @@ namespace KernelTestingWPF
                     QueueFastInstruction();
                 }
 
-                Thread.Sleep(800);
+                Thread.Sleep(400);
             }
         }
 
@@ -199,29 +198,14 @@ namespace KernelTestingWPF
             int check = CoreManager.checkFastCoresAvailability();
 
             if(check != -1)
-            {
-                //try
-              //  {
-                    CoreManager.EnqueueAt(check, CoreManager.fastInstructions.Dequeue());
-
-                //}
-                //catch (Exception)
-                //{
-
-                   
-                //}
+            {             
+                CoreManager.EnqueueFastSlowAt(check, CoreManager.fastInstructions.Dequeue());
                 RemoveFastListViewItem();
             }
             else if(CoreManager.checkSlowCoresAvailability() != -1)
             {
-                //try
-                //{
-                    CoreManager.EnqueueAt(CoreManager.checkSlowCoresAvailability(), CoreManager.fastInstructions.Dequeue());
-                //}
-                //catch (Exception)
-                //{
-
-                //}
+                
+                CoreManager.EnqueueFastSlowAt(CoreManager.checkSlowCoresAvailability(), CoreManager.fastInstructions.Dequeue());
                 RemoveFastListViewItem();
             }
 
@@ -234,12 +218,12 @@ namespace KernelTestingWPF
 
             if (check != -1)
             {
-                CoreManager.EnqueueAt(check, CoreManager.slowInstructions.Dequeue());
+                CoreManager.EnqueueFastSlowAt(check, CoreManager.slowInstructions.Dequeue());
                 RemoveSlowListViewItem();
             }
             else if (CoreManager.checkFastCoresAvailability() != -1)
             {
-                CoreManager.EnqueueAt(CoreManager.checkFastCoresAvailability(), CoreManager.slowInstructions.Dequeue());
+                CoreManager.EnqueueFastSlowAt(CoreManager.checkFastCoresAvailability(), CoreManager.slowInstructions.Dequeue());
                 RemoveSlowListViewItem();
             }
         }

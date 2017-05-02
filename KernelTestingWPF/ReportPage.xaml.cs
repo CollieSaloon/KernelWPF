@@ -24,7 +24,12 @@ namespace KernelTestingWPF
         public ReportPage()
         {
             InitializeComponent();
+            SetPage();
+            
+        }
 
+        private void SetPage()
+        {
             listViewReport1.Items.Add("Core");
             listViewReport2.Items.Add("Total Execution Time");
             listViewReport3.Items.Add("Total Power Consumption");
@@ -32,7 +37,7 @@ namespace KernelTestingWPF
 
             for (int i = 0; i < CoreManager.TotalCoreNum(); i++)
             {
-                listViewReport1.Items.Add((CoreManager.IsFast(i) ? "Fast" : "Slow") + " Core #" + (i + 1 - (!CoreManager.IsFast(i) ? CoreManager.numFast : 0)) );
+                listViewReport1.Items.Add((CoreManager.IsFast(i) ? "Fast" : "Slow") + " Core #" + (i + 1 - (!CoreManager.IsFast(i) ? CoreManager.numFast : 0)));
                 listViewReport2.Items.Add(CoreManager.GetExecTime(i) + " ms");
                 listViewReport3.Items.Add(CoreManager.GetPowerConsumption(i) + " W");
                 listViewReport4.Items.Add(CoreManager.GetNumProcs(i));

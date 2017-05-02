@@ -234,6 +234,11 @@ namespace KernelTestingWPF
             cores[index].Enqueue(instruction);
         }
 
+        public static void EnqueueFastSlowAt(int index,Instruction instruction)
+        {
+            cores[index].EnqueueFastSlow(instruction);
+        }
+
         //public static bool SlowEnqueue(Instruction instruction)
         //{
         //    bool canSlowQueue = false;
